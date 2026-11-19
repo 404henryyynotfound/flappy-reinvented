@@ -76,6 +76,16 @@
       font-size: 0.55rem;
       color: #639bff;
       margin-bottom: 20px;
+      text-decoration: none;
+    }
+
+    .author a {
+      color: #29adff;
+      text-decoration: underline;
+    }
+
+    .author a:hover {
+      color: #ffcd75;
     }
 
     .menu-buttons {
@@ -215,7 +225,8 @@
   <!-- MAIN MENU -->
   <div id="menu-screen" class="screen hidden">
     <h1>FLAPPY BIRD REINVENTED</h1>
-    <p class="author" id="user-status-text">LOGGED OUT (GUEST)</p>
+    <p class="author">BY <a href="https://about.me/henry.g" target="_blank">HENRY GREEN</a></p>
+    <p class="author" id="user-status-text" style="margin-top: -10px;">LOGGED OUT (GUEST)</p>
 
     <div class="menu-buttons">
       <button id="play-btn">PLAY ENDLESS</button>
@@ -336,7 +347,6 @@
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Slower gravity and lighter lift for much smoother control
     let bird = { x: 60, y: 240, radius: 14, gravity: 0.3, lift: -6, velocity: 0 };
     let pipes = [];
     let powerUpsOnScreen = [];
@@ -647,7 +657,6 @@
       bird.velocity += gravity;
       bird.y += bird.velocity;
 
-      // Slower baseline speed and wider gaps
       let speed = 1.7;
       let gap = 145;
       if (currentMode === 'campaign') {
