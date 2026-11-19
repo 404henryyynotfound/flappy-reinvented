@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flappy Bird Reinvented | By Henry Green</title>
   
-  <!-- Favicon with a little bird -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🐦</text></svg>">
-
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <style>
@@ -172,6 +170,10 @@
     <source src="https://actions.google.com/sounds/v1/ambiences/arcade_room.ogg" type="audio/ogg">
   </audio>
 
+  <audio id="shop-music" loop>
+    <source src="https://actions.google.com/sounds/v1/ambiences/store_ambience.ogg" type="audio/ogg">
+  </audio>
+
   <!-- LOADING SCREEN -->
   <div id="loading-screen" class="screen">
     <div class="spinner"></div>
@@ -239,9 +241,11 @@
     const accountModal = document.getElementById('account-modal');
     const leaderboardModal = document.getElementById('leaderboard-modal');
     const bgMusic = document.getElementById('retro-music');
+    const shopMusic = document.getElementById('shop-music');
 
     // Game variables
     let score = 0;
+    let sessionRobins = 0;
     let robins = parseInt(localStorage.getItem('flappy_robins')) || 0;
     let unlockedSkins = JSON.parse(localStorage.getItem('flappy_skins')) || ['Classic Yellow'];
     let currentSkin = localStorage.getItem('flappy_current_skin') || 'Classic Yellow';
@@ -271,7 +275,7 @@
     });
 
     document.addEventListener('click', () => {
-      if (bgMusic.paused) {
+      if (bgMusic.paused && shopMusic.paused) {
         bgMusic.volume = 0.3;
         bgMusic.play().catch(() => {});
       }
@@ -295,6 +299,9 @@
     });
 
     document.getElementById('shop-btn').addEventListener('click', () => {
+      bgMusic.pause();
+      shopMusic.volume = 0.3;
+      shopMusic.play().catch(() => {});
       renderShop();
       shopModal.classList.remove('hidden');
     });
@@ -312,6 +319,11 @@
         shopModal.classList.add('hidden');
         accountModal.classList.add('hidden');
         leaderboardModal.classList.add('hidden');
+        shopMusic.pause();
+        shopMusic.currentTime = 0;
+        if (!bgMusic.paused === false) {
+          bgMusic.play().catch(() => {});
+        }
         updateUI();
       });
     });
@@ -336,6 +348,7 @@
       bird.velocity = 0;
       pipes = [];
       score = 0;
+      sessionRobins = 0;
       frameCount = 0;
       gameRunning = true;
       gameOver = false;
@@ -412,6 +425,7 @@
         if (!pipes[i].passed && pipes[i].x < bird.x) {
           score++;
           robins++;
+          sessionRobins++;
           pipes[i].passed = true;
           localStorage.setItem('flappy_robins', robins);
           updateUI();
@@ -454,25 +468,44 @@
         ctx.strokeRect(p.x, p.bottom, 50, canvas.height - p.bottom);
       });
 
-      // Draw Bird
+      // Draw Bird (Detailed Pixel Shape)
       let activeColor = skins.find(s => s.name === currentSkin)?.color || '#f8c038';
       ctx.fillStyle = activeColor;
       ctx.beginPath();
       ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 2;
       ctx.stroke();
 
+      // Bird Eye
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(bird.x + 3, bird.y - 6, 5, 5);
+      ctx.fillStyle = '#181425';
+      ctx.fillRect(bird.x + 5, bird.y - 5, 2, 2);
+
+      // Bird Beak
+      ctx.fillStyle = '#f77622';
+      ctx.fillRect(bird.x + bird.radius - 2, bird.y - 2, 6, 5);
+
       if (gameOver) {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '14px "Press Start 2P"';
+        
+        ctx.fillStyle = '#f77622';
+        ctx.font = '12px "Press Start 2P"';
         ctx.textAlign = 'center';
-        ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 20);
+        ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 60);
+
+        let globalRank = Math.max(1, 105 - (score * 5));
+        ctx.fillStyle = '#ffcd75';
         ctx.font = '8px "Press Start 2P"';
-        ctx.fillText('CLICK TO RETRY', canvas.width / 2, canvas.height / 2 + 20);
+        ctx.fillText(`SCORE: ${score}`, canvas.width / 2, canvas.height / 2 - 20);
+        ctx.fillText(`ROBINS EARNED: +${sessionRobins} 🐦`, canvas.width / 2, canvas.height / 2 + 5);
+        ctx.fillText(`GLOBAL RANK: #${globalRank}`, canvas.width / 2, canvas.height / 2 + 30);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText('CLICK TO RETRY', canvas.width / 2, canvas.height / 2 + 75);
         return;
       }
 
