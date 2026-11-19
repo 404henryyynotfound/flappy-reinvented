@@ -60,7 +60,7 @@
     }
 
     h1 {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       line-height: 1.4;
       color: #f77622;
       text-shadow: 3px 3px #d95763;
@@ -69,21 +69,21 @@
     }
 
     .author {
-      font-size: 0.7rem;
+      font-size: 0.6rem;
       color: #639bff;
-      margin-bottom: 35px;
+      margin-bottom: 25px;
     }
 
     .menu-buttons {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
       width: 280px;
     }
 
     button {
-      padding: 14px 10px;
-      font-size: 0.8rem;
+      padding: 12px 10px;
+      font-size: 0.7rem;
       font-weight: bold;
       border: 4px solid #ffffff;
       cursor: pointer;
@@ -107,6 +107,14 @@
       background-color: #3cb3ff;
     }
 
+    button.accent {
+      background-color: #f77622;
+    }
+
+    button.accent:hover {
+      background-color: #ff8c3b;
+    }
+
     #game-screen {
       background: #5973e8;
     }
@@ -122,7 +130,7 @@
       justify-content: space-between;
       width: 384px;
       margin-bottom: 8px;
-      font-size: 0.7rem;
+      font-size: 0.6rem;
       color: #ffcd75;
       text-shadow: 2px 2px #181425;
     }
@@ -131,29 +139,43 @@
       position: absolute;
       background: #222034;
       border: 4px solid #ffffff;
-      padding: 25px;
-      width: 340px;
+      padding: 20px;
+      width: 360px;
+      max-height: 90vh;
       text-align: center;
       box-shadow: 8px 8px #181425;
       z-index: 10;
+      display: flex;
+      flex-direction: column;
     }
 
     .modal h2 {
-      font-size: 0.9rem;
-      margin-bottom: 15px;
+      font-size: 0.8rem;
+      margin-bottom: 12px;
       color: #ffcd75;
     }
 
-    .shop-grid {
+    .shop-grid, .level-grid, .legend-box {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 10px;
-      margin-bottom: 15px;
-      max-height: 200px;
+      gap: 8px;
+      margin-bottom: 12px;
+      max-height: 180px;
       overflow-y: auto;
+      text-align: left;
     }
 
-    .shop-item {
+    .shop-item, .legend-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #181425;
+      padding: 6px 8px;
+      border: 2px solid #ffffff;
+      font-size: 0.55rem;
+    }
+
+    .level-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -161,6 +183,18 @@
       padding: 8px;
       border: 2px solid #ffffff;
       font-size: 0.6rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+
+    .tabs button {
+      flex: 1;
+      padding: 6px;
+      font-size: 0.55rem;
     }
   </style>
 </head>
@@ -186,10 +220,11 @@
     <p class="author">BY HENRY GREEN</p>
 
     <div class="menu-buttons">
-      <button id="play-btn">PLAY GAME</button>
-      <button id="shop-btn" class="secondary">UPGRADES & SKINS</button>
-      <button id="leaderboard-btn" class="secondary">SCORES</button>
-      <button id="account-btn" class="secondary">LOGIN</button>
+      <button id="play-btn">PLAY ENDLESS</button>
+      <button id="campaign-menu-btn" class="accent">CAMPAIGN MODE</button>
+      <button id="shop-btn" class="secondary">SHOP & POWER-UPS</button>
+      <button id="leaderboard-btn" class="secondary">LEADERBOARD</button>
+      <button id="account-btn" class="secondary">PROFILE</button>
     </div>
   </div>
 
@@ -197,39 +232,45 @@
   <div id="game-screen" class="screen hidden">
     <div class="hud">
       <span id="score-display">SCORE: 0</span>
+      <span id="powerup-display">PWR: NONE</span>
       <span id="robins-display">ROBINS: 0 🐦</span>
     </div>
     <canvas id="gameCanvas" width="384" height="512"></canvas>
-    <button id="back-to-menu-btn" class="secondary" style="margin-top: 15px; width: 200px;">MENU</button>
+    <button id="back-to-menu-btn" class="secondary" style="margin-top: 10px; width: 200px;">MENU</button>
   </div>
 
   <!-- SHOP MODAL -->
   <div id="shop-modal" class="modal hidden">
-    <h2>CHARACTER SHOP</h2>
-    <p style="font-size: 0.6rem; margin-bottom: 15px; color: #639bff;">Earn Robins by playing!</p>
-    <div class="shop-grid" id="shop-list">
-      <!-- Populated via JS -->
+    <h2>SHOP & LEGEND</h2>
+    <div class="tabs">
+      <button id="tab-skins" onclick="switchShopTab('skins')">SKINS</button>
+      <button id="tab-upgrades" class="secondary" onclick="switchShopTab('upgrades')">PERKS</button>
+      <button id="tab-legend" class="secondary" onclick="switchShopTab('legend')">LEGEND</button>
     </div>
+    <div class="shop-grid" id="shop-list"></div>
+    <button class="secondary close-modal-btn" style="width: 100%;">CLOSE</button>
+  </div>
+
+  <!-- CAMPAIGN SELECT MODAL -->
+  <div id="campaign-modal" class="modal hidden">
+    <h2>CAMPAIGN LEVELS</h2>
+    <p style="font-size: 0.55rem; margin-bottom: 10px; color: #639bff;">Beat levels in order!</p>
+    <div class="level-grid" id="level-list"></div>
     <button class="secondary close-modal-btn" style="width: 100%;">CLOSE</button>
   </div>
 
   <!-- ACCOUNT MODAL -->
   <div id="account-modal" class="modal hidden">
-    <h2>PLAYER LOGIN</h2>
-    <input type="email" id="email-input" placeholder="EMAIL" style="width:100%; padding:8px; margin-bottom:10px; background:#181425; border:2px solid #fff; color:#fff; font-size:0.6rem;" />
-    <input type="password" id="password-input" placeholder="PASS" style="width:100%; padding:8px; margin-bottom:10px; background:#181425; border:2px solid #fff; color:#fff; font-size:0.6rem;" />
-    <button id="login-submit-btn" style="width:100%; margin-bottom:5px;">LOGIN</button>
+    <h2>PLAYER PROFILE</h2>
+    <input type="text" id="username-input" placeholder="YOUR NAME" style="width:100%; padding:8px; margin-bottom:10px; background:#181425; border:2px solid #fff; color:#fff; font-size:0.6rem;" />
+    <button id="save-user-btn" style="width:100%; margin-bottom:8px;">SAVE NAME</button>
     <button class="secondary close-modal-btn" style="width: 100%;">CLOSE</button>
   </div>
 
   <!-- LEADERBOARD MODAL -->
   <div id="leaderboard-modal" class="modal hidden">
-    <h2>TOP PLAYERS</h2>
-    <ol style="text-align: left; margin: 15px 0 20px 20px; font-size: 0.6rem; line-height: 2;">
-      <li>HENRY GREEN — 100</li>
-      <li>PLAYER TWO — 75</li>
-      <li>GUEST — 40</li>
-    </ol>
+    <h2>GLOBAL LEADERBOARD</h2>
+    <div class="shop-grid" id="leaderboard-list" style="max-height: 220px;"></div>
     <button class="secondary close-modal-btn" style="width: 100%;">CLOSE</button>
   </div>
 
@@ -240,33 +281,68 @@
     const shopModal = document.getElementById('shop-modal');
     const accountModal = document.getElementById('account-modal');
     const leaderboardModal = document.getElementById('leaderboard-modal');
+    const campaignModal = document.getElementById('campaign-modal');
     const bgMusic = document.getElementById('retro-music');
     const shopMusic = document.getElementById('shop-music');
 
-    // Game variables
-    let score = 0;
-    let sessionRobins = 0;
+    // Persistent Game Data
+    let playerName = localStorage.getItem('flappy_name') || 'HENRY GREEN';
     let robins = parseInt(localStorage.getItem('flappy_robins')) || 0;
     let unlockedSkins = JSON.parse(localStorage.getItem('flappy_skins')) || ['Classic Yellow'];
     let currentSkin = localStorage.getItem('flappy_current_skin') || 'Classic Yellow';
+    let unlockedLevels = parseInt(localStorage.getItem('flappy_unlocked_levels')) || 1;
+    let purchasedPerks = JSON.parse(localStorage.getItem('flappy_perks')) || [];
 
+    // Catalog items
     const skins = [
       { name: 'Classic Yellow', color: '#f8c038', price: 0 },
       { name: 'Neon Pink', color: '#ff0044', price: 10 },
       { name: 'Cyber Blue', color: '#29adff', price: 25 },
-      { name: 'Matrix Green', color: '#38b764', price: 50 }
+      { name: 'Matrix Green', color: '#38b764', price: 50 },
+      { name: 'Golden Phoenix', color: '#ffcd75', price: 100 },
+      { name: 'Void Shadow', color: '#636363', price: 150 }
     ];
+
+    const perks = [
+      { id: 'extra_life', name: 'Shield Perk (1 Hit Save)', price: 40 },
+      { id: 'magnet', name: 'Robin Magnet (Double Drops)', price: 60 },
+      { id: 'slow_fall', name: 'Lighter Gravity', price: 80 }
+    ];
+
+    const powerUpTypes = [
+      { type: 'shield', label: '🛡️ SHIELD', color: '#29adff' },
+      { type: 'double', label: '⭐ 2X ROBINS', color: '#ffcd75' },
+      { type: 'shrink', label: '🔍 MINI BIRD', color: '#38b764' }
+    ];
+
+    const levels = [
+      { id: 1, name: 'Level 1: Breeze', target: 5, speed: 2.3, gap: 130 },
+      { id: 2, name: 'Level 2: Gusty', target: 10, speed: 2.6, gap: 120 },
+      { id: 3, name: 'Level 3: Storm', target: 15, speed: 2.9, gap: 110 },
+      { id: 4, name: 'Level 4: Typhoon', target: 20, speed: 3.2, gap: 100 },
+      { id: 5, name: 'Level 5: Hurricane', target: 25, speed: 3.5, gap: 90 }
+    ];
+
+    let currentMode = 'endless'; // 'endless' or 'campaign'
+    let activeLevel = 1;
+    let score = 0;
+    let sessionRobins = 0;
+    let gameRunning = false;
+    let gameOver = false;
 
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
     let bird = { x: 60, y: 240, radius: 14, gravity: 0.4, lift: -7, velocity: 0 };
     let pipes = [];
+    let powerUpsOnScreen = [];
+    let activePowerUp = null;
+    let powerUpTimer = 0;
+    let hasShield = false;
     let frameCount = 0;
-    let gameRunning = false;
-    let gameOver = false;
 
     window.addEventListener('load', () => {
+      document.getElementById('username-input').value = playerName;
       setTimeout(() => {
         loadingScreen.classList.add('hidden');
         menuScreen.classList.remove('hidden');
@@ -281,14 +357,15 @@
       }
     }, { once: true });
 
+    // Menu Navigation Events
     document.getElementById('play-btn').addEventListener('click', () => {
-      gameScreen.classList.remove('hidden');
-      menuScreen.classList.add('slide-out');
-      setTimeout(() => {
-        menuScreen.classList.add('hidden');
-        menuScreen.classList.remove('slide-out');
-        startGame();
-      }, 600);
+      currentMode = 'endless';
+      startSession();
+    });
+
+    document.getElementById('campaign-menu-btn').addEventListener('click', () => {
+      renderLevelSelect();
+      campaignModal.classList.remove('hidden');
     });
 
     document.getElementById('back-to-menu-btn').addEventListener('click', () => {
@@ -302,7 +379,7 @@
       bgMusic.pause();
       shopMusic.volume = 0.3;
       shopMusic.play().catch(() => {});
-      renderShop();
+      switchShopTab('skins');
       shopModal.classList.remove('hidden');
     });
 
@@ -311,7 +388,17 @@
     });
 
     document.getElementById('leaderboard-btn').addEventListener('click', () => {
+      renderLeaderboard();
       leaderboardModal.classList.remove('hidden');
+    });
+
+    document.getElementById('save-user-btn').addEventListener('click', () => {
+      let val = document.getElementById('username-input').value.trim();
+      if(val) {
+        playerName = val.toUpperCase();
+        localStorage.setItem('flappy_name', playerName);
+        alert('Profile saved!');
+      }
     });
 
     document.querySelectorAll('.close-modal-btn').forEach(btn => {
@@ -319,16 +406,15 @@
         shopModal.classList.add('hidden');
         accountModal.classList.add('hidden');
         leaderboardModal.classList.add('hidden');
+        campaignModal.classList.add('hidden');
         shopMusic.pause();
         shopMusic.currentTime = 0;
-        if (!bgMusic.paused === false) {
-          bgMusic.play().catch(() => {});
-        }
+        bgMusic.play().catch(() => {});
         updateUI();
       });
     });
 
-    // Jump Control
+    // Control triggers
     window.addEventListener('keydown', e => {
       if ((e.code === 'Space' || e.code === 'ArrowUp') && gameRunning) {
         bird.velocity = bird.lift;
@@ -339,14 +425,28 @@
       if (gameRunning) {
         bird.velocity = bird.lift;
       } else if (gameOver) {
-        startGame();
+        startSession();
       }
     });
+
+    function startSession() {
+      gameScreen.classList.remove('hidden');
+      menuScreen.classList.add('slide-out');
+      setTimeout(() => {
+        menuScreen.classList.add('hidden');
+        menuScreen.classList.remove('slide-out');
+        startGame();
+      }, 600);
+    }
 
     function startGame() {
       bird.y = 240;
       bird.velocity = 0;
       pipes = [];
+      powerUpsOnScreen = [];
+      activePowerUp = null;
+      powerUpTimer = 0;
+      hasShield = purchasedPerks.includes('extra_life');
       score = 0;
       sessionRobins = 0;
       frameCount = 0;
@@ -357,24 +457,55 @@
 
     function updateUI() {
       document.getElementById('robins-display').textContent = `ROBINS: ${robins} 🐦`;
-      document.getElementById('score-display').textContent = `SCORE: ${score}`;
+      document.getElementById('score-display').textContent = currentMode === 'campaign' ? `GOAL: ${levels[activeLevel-1].target}` : `SCORE: ${score}`;
+      document.getElementById('powerup-display').textContent = activePowerUp ? `PWR: ${activePowerUp}` : `PWR: NONE`;
     }
 
-    function renderShop() {
+    // Shop tabs handler
+    window.switchShopTab = function(tab) {
       const list = document.getElementById('shop-list');
       list.innerHTML = '';
-      skins.forEach(skin => {
-        const isUnlocked = unlockedSkins.includes(skin.name);
-        const isEquipped = currentSkin === skin.name;
-        
-        const item = document.createElement('div');
-        item.className = 'shop-item';
-        item.innerHTML = `
-          <span style="color:${skin.color}">${skin.name}</span>
-          ${isEquipped ? '<span>EQUIPPED</span>' : isUnlocked ? `<button onclick="selectSkin('${skin.name}')">EQUIP</button>` : `<button onclick="buySkin('${skin.name}', ${skin.price})">BUY (${skin.price} 🐦)</button>`}
-        `;
-        list.appendChild(item);
-      });
+      
+      document.getElementById('tab-skins').className = tab === 'skins' ? '' : 'secondary';
+      document.getElementById('tab-upgrades').className = tab === 'upgrades' ? '' : 'secondary';
+      document.getElementById('tab-legend').className = tab === 'legend' ? '' : 'secondary';
+
+      if (tab === 'skins') {
+        skins.forEach(skin => {
+          const isUnlocked = unlockedSkins.includes(skin.name);
+          const isEquipped = currentSkin === skin.name;
+          const item = document.createElement('div');
+          item.className = 'shop-item';
+          item.innerHTML = `
+            <span style="color:${skin.color}">${skin.name}</span>
+            ${isEquipped ? '<span>EQUIPPED</span>' : isUnlocked ? `<button onclick="selectSkin('${skin.name}')">EQUIP</button>` : `<button onclick="buySkin('${skin.name}', ${skin.price})">BUY (${skin.price}🐦)</button>`}
+          `;
+          list.appendChild(item);
+        });
+      } else if (tab === 'upgrades') {
+        perks.forEach(perk => {
+          const isOwned = purchasedPerks.includes(perk.id);
+          const item = document.createElement('div');
+          item.className = 'shop-item';
+          item.innerHTML = `
+            <span>${perk.name}</span>
+            ${isOwned ? '<span style="color:#38b764;">OWNED</span>' : `<button onclick="buyPerk('${perk.id}', ${perk.price})">BUY (${perk.price}🐦)</button>`}
+          `;
+          list.appendChild(item);
+        });
+      } else if (tab === 'legend') {
+        const legendItems = [
+          { title: '🛡️ SHIELD', desc: 'Protects from 1 crash.' },
+          { title: '⭐ 2X ROBINS', desc: 'Doubles collected Robins.' },
+          { title: '🔍 MINI BIRD', desc: 'Shrinks bird size temporarily.' }
+        ];
+        legendItems.forEach(leg => {
+          const item = document.createElement('div');
+          item.className = 'legend-item';
+          item.innerHTML = `<strong>${leg.title}</strong><span>${leg.desc}</span>`;
+          list.appendChild(item);
+        });
+      }
     }
 
     window.buySkin = function(name, price) {
@@ -385,7 +516,7 @@
         localStorage.setItem('flappy_robins', robins);
         localStorage.setItem('flappy_skins', JSON.stringify(unlockedSkins));
         localStorage.setItem('flappy_current_skin', currentSkin);
-        renderShop();
+        switchShopTab('skins');
         updateUI();
       } else {
         alert("Not enough Robins!");
@@ -395,65 +526,194 @@
     window.selectSkin = function(name) {
       currentSkin = name;
       localStorage.setItem('flappy_current_skin', currentSkin);
-      renderShop();
+      switchShopTab('skins');
+    }
+
+    window.buyPerk = function(id, price) {
+      if (robins >= price) {
+        robins -= price;
+        purchasedPerks.push(id);
+        localStorage.setItem('flappy_robins', robins);
+        localStorage.setItem('flappy_perks', JSON.stringify(purchasedPerks));
+        switchShopTab('upgrades');
+        updateUI();
+      } else {
+        alert("Not enough Robins!");
+      }
+    }
+
+    function renderLevelSelect() {
+      const list = document.getElementById('level-list');
+      list.innerHTML = '';
+      levels.forEach(lvl => {
+        const unlocked = lvl.id <= unlockedLevels;
+        const item = document.createElement('div');
+        item.className = 'level-item';
+        item.innerHTML = `
+          <span>${lvl.name}</span>
+          ${unlocked ? `<button onclick="startCampaignLevel(${lvl.id})">PLAY</button>` : '<span style="color:#636363">LOCKED</span>'}
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    window.startCampaignLevel = function(id) {
+      currentMode = 'campaign';
+      activeLevel = id;
+      campaignModal.classList.add('hidden');
+      startSession();
+    }
+
+    function renderLeaderboard() {
+      let scores = JSON.parse(localStorage.getItem('flappy_leaderboard')) || [
+        { name: 'HENRY GREEN', score: 42 },
+        { name: 'CYBERPUNK99', score: 30 },
+        { name: 'PIXELMASTER', score: 18 },
+        { name: 'GUEST_USER', score: 10 }
+      ];
+      
+      // Update or insert current player score
+      let existing = scores.find(s => s.name === playerName);
+      if (existing) {
+        if (score > existing.score) existing.score = score;
+      } else {
+        scores.push({ name: playerName, score: score });
+      }
+      scores.sort((a, b) => b.score - a.score);
+      localStorage.setItem('flappy_leaderboard', JSON.stringify(scores));
+
+      const list = document.getElementById('leaderboard-list');
+      list.innerHTML = '';
+      scores.slice(0, 5 ব্যতিক্রম).forEach((entry, idx) => {
+        const item = document.createElement('div');
+        item.className = 'shop-item';
+        item.innerHTML = `<span>#${idx+1} ${entry.name}</span><span>${entry.score} PTS</span>`;
+        list.appendChild(item);
+      });
     }
 
     function loop() {
       if (!gameRunning) return;
 
-      // Physics
-      bird.velocity += bird.gravity;
+      // Physics settings
+      let gravity = bird.gravity;
+      if (purchasedPerks.includes('slow_fall')) gravity = 0.32;
+      bird.velocity += gravity;
       bird.y += bird.velocity;
 
-      // Pipe generation
+      // Level parameters
+      let speed = 2.5;
+      let gap = 120;
+      if (currentMode === 'campaign') {
+        let lvlData = levels[activeLevel - 1];
+        speed = lvlData.speed;
+        gap = lvlData.gap;
+      }
+
+      // Pipe & Power-up generation
       if (frameCount % 90 === 0) {
-        let gap = 120;
-        let topHeight = Math.floor(Math.random() * 200) + 60;
+        let topHeight = Math.floor(Math.random() * 180) + 50;
         pipes.push({
           x: canvas.width,
           top: topHeight,
           bottom: topHeight + gap,
           passed: false
         });
+
+        // Chance to spawn powerup in gap
+        if (Math.random() < 0.4) {
+          let pType = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
+          powerUpsOnScreen.push({
+            x: canvas.width + 25,
+            y: topHeight + (gap / 2),
+            type: pType.type,
+            label: pType.label,
+            radius: 10
+          });
+        }
       }
 
       // Move pipes
       for (let i = pipes.length - 1; i >= 0; i--) {
-        pipes[i].x -= 2.5;
+        pipes[i].x -= speed;
 
-        // Score check
         if (!pipes[i].passed && pipes[i].x < bird.x) {
           score++;
-          robins++;
-          sessionRobins++;
+          let drop = purchasedPerks.includes('magnet') || activePowerUp === 'double' ? 2 : 1;
+          sessionRobins += drop;
+          robins += drop;
           pipes[i].passed = true;
           localStorage.setItem('flappy_robins', robins);
           updateUI();
+
+          // Campaign Win Check
+          if (currentMode === 'campaign' && score >= levels[activeLevel - 1].target) {
+            gameRunning = false;
+            gameOver = true;
+            if (activeLevel + 1 > unlockedLevels && activeLevel < levels.length) {
+              unlockedLevels = activeLevel + 1;
+              localStorage.setItem('flappy_unlocked_levels', unlockedLevels);
+            }
+          }
         }
 
         // Collision detection
+        let currentRadius = activePowerUp === 'shrink' ? 9 : bird.radius;
         if (
-          bird.x + bird.radius > pipes[i].x &&
-          bird.x - bird.radius < pipes[i].x + 50 &&
-          (bird.y - bird.radius < pipes[i].top || bird.y + bird.radius > pipes[i].bottom)
+          bird.x + currentRadius > pipes[i].x &&
+          bird.x - currentRadius < pipes[i].x + 50 &&
+          (bird.y - currentRadius < pipes[i].top || bird.y + currentRadius > pipes[i].bottom)
         ) {
-          gameRunning = false;
-          gameOver = true;
+          if (hasShield) {
+            hasShield = false;
+            pipes.splice(i, 1); // clear obstacle safely
+          } else {
+            gameRunning = false;
+            gameOver = true;
+          }
         }
 
-        // Remove offscreen pipes
-        if (pipes[i].x < -50) {
-          pipes.splice(i, 1);
+        if (pipes[i].x < -50) pipes.splice(i, 1);
+      }
+
+      // Move and collect powerups
+      for (let i = powerUpsOnScreen.length - 1; i >= 0; i--) {
+        powerUpsOnScreen[i].x -= speed;
+        let p = powerUpsOnScreen[i];
+        
+        // Check collection
+        let dist = Math.hypot(bird.x - p.x, bird.y - p.y);
+        if (dist < bird.radius + p.radius) {
+          activePowerUp = p.type;
+          powerUpTimer = 300; // duration frames
+          powerUpsOnScreen.splice(i, 1);
+          updateUI();
+        } else if (p.x < -20) {
+          powerUpsOnScreen.splice(i, 1);
+        }
+      }
+
+      if (activePowerUp) {
+        powerUpTimer--;
+        if (powerUpTimer <= 0) {
+          activePowerUp = null;
+          updateUI();
         }
       }
 
       // Ground or ceiling collision
-      if (bird.y + bird.radius > canvas.height || bird.y - bird.radius < 0) {
-        gameRunning = false;
-        gameOver = true;
+      let activeRadius = activePowerUp === 'shrink' ? 9 : bird.radius;
+      if (bird.y + activeRadius > canvas.height || bird.y - activeRadius < 0) {
+        if (hasShield) {
+          hasShield = false;
+          bird.y = canvas.height / 2;
+        } else {
+          gameRunning = false;
+          gameOver = true;
+        }
       }
 
-      // DRAWING
+      // RENDER SCENE
       ctx.fillStyle = '#3b5dc9';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -468,44 +728,54 @@
         ctx.strokeRect(p.x, p.bottom, 50, canvas.height - p.bottom);
       });
 
-      // Draw Bird (Detailed Pixel Shape)
+      // Draw Power-ups on screen
+      powerUpsOnScreen.forEach(p => {
+        ctx.fillStyle = p.type === 'shield' ? '#29adff' : p.type === 'double' ? '#ffcd75' : '#38b764';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+
+      // Draw Detailed Bird
       let activeColor = skins.find(s => s.name === currentSkin)?.color || '#f8c038';
       ctx.fillStyle = activeColor;
       ctx.beginPath();
-      ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
+      ctx.arc(bird.x, bird.y, activeRadius, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = hasShield ? '#29adff' : '#ffffff';
+      ctx.lineWidth = hasShield ? 4 : 2;
       ctx.stroke();
 
-      // Bird Eye
+      // Eye
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(bird.x + 3, bird.y - 6, 5, 5);
       ctx.fillStyle = '#181425';
       ctx.fillRect(bird.x + 5, bird.y - 5, 2, 2);
 
-      // Bird Beak
+      // Beak
       ctx.fillStyle = '#f77622';
-      ctx.fillRect(bird.x + bird.radius - 2, bird.y - 2, 6, 5);
+      ctx.fillRect(bird.x + activeRadius - 2, bird.y - 2, 6, 5);
 
       if (gameOver) {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        renderLeaderboard();
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
         ctx.fillStyle = '#f77622';
         ctx.font = '12px "Press Start 2P"';
         ctx.textAlign = 'center';
-        ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 60);
+        ctx.fillText(currentMode === 'campaign' && score >= levels[activeLevel-1].target ? 'VICTORY!' : 'GAME OVER', canvas.width / 2, canvas.height / 2 - 60);
 
-        let globalRank = Math.max(1, 105 - (score * 5));
         ctx.fillStyle = '#ffcd75';
         ctx.font = '8px "Press Start 2P"';
         ctx.fillText(`SCORE: ${score}`, canvas.width / 2, canvas.height / 2 - 20);
         ctx.fillText(`ROBINS EARNED: +${sessionRobins} 🐦`, canvas.width / 2, canvas.height / 2 + 5);
-        ctx.fillText(`GLOBAL RANK: #${globalRank}`, canvas.width / 2, canvas.height / 2 + 30);
 
         ctx.fillStyle = '#ffffff';
-        ctx.fillText('CLICK TO RETRY', canvas.width / 2, canvas.height / 2 + 75);
+        ctx.fillText('CLICK TO RETRY', canvas.width / 2, canvas.height / 2 + 55);
         return;
       }
 
