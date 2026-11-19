@@ -46,6 +46,22 @@
       display: none !important;
     }
 
+    /* Menu background canvas for endless video simulation */
+    #menu-bg-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    #menu-screen > *:not(#menu-bg-canvas) {
+      z-index: 1;
+      position: relative;
+    }
+
     .progress-container {
       width: 260px;
       height: 24px;
@@ -59,15 +75,15 @@
     .progress-bar {
       width: 0%;
       height: 100%;
-      background-color: #38b764;
+      background-color: var(--primary-color, #38b764);
       transition: width 0.1s linear;
     }
 
     h1 {
       font-size: 1.5rem;
       line-height: 1.4;
-      color: #f77622;
-      text-shadow: 3px 3px #d95763;
+      color: var(--title-color, #f77622);
+      text-shadow: 3px 3px var(--title-shadow, #d95763);
       margin-bottom: 8px;
       padding: 0 20px;
     }
@@ -101,14 +117,14 @@
       font-weight: bold;
       border: 4px solid #ffffff;
       cursor: pointer;
-      background-color: #38b764;
+      background-color: var(--primary-color, #38b764);
       color: #ffffff;
       box-shadow: 4px 4px #181425;
       image-rendering: pixelated;
     }
 
     button:hover {
-      background-color: #41af6e;
+      background-color: var(--primary-hover, #41af6e);
       transform: translate(-2px, -2px);
       box-shadow: 6px 6px #181425;
     }
@@ -122,11 +138,11 @@
     }
 
     button.accent {
-      background-color: #f77622;
+      background-color: var(--accent-color, #f77622);
     }
 
     button.accent:hover {
-      background-color: #ff8c3b;
+      background-color: var(--accent-hover, #ff8c3b);
     }
 
     #game-screen {
@@ -200,9 +216,26 @@
       padding: 6px;
       font-size: 0.5rem;
     }
+
+    /* Version number tag in bottom right */
+    #version-tag {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      font-size: 0.45rem;
+      color: #ffffff;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 6px 10px;
+      border: 2px solid #ffffff;
+      cursor: pointer;
+      z-index: 20;
+    }
+    #version-tag:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
   </style>
 </head>
-<body>
+<body style="--primary-color: #38b764; --primary-hover: #41af6e; --accent-color: #f77622; --accent-hover: #ff8c3b; --title-color: #f77622; --title-shadow: #d95763;">
 
   <!-- Audio Tracks -->
   <audio id="menu-music" loop>
@@ -212,6 +245,9 @@
   <audio id="shop-music" loop>
     <source src="https://actions.google.com/sounds/v1/ambiences/store_ambience.ogg" type="audio/ogg">
   </audio>
+
+  <!-- Version Tag -->
+  <div id="version-tag" onclick="openChangelogModal()">v1.0.0 Beta</div>
 
   <!-- LOADING SCREEN -->
   <div id="loading-screen" class="screen">
@@ -224,7 +260,8 @@
 
   <!-- MAIN MENU -->
   <div id="menu-screen" class="screen hidden">
-    <h1>FLAPPY BIRD REINVENTED</h1>
+    <canvas id="menu-bg-canvas"></canvas>
+    <h1 id="main-title">FLAPPY BIRD REINVENTED</h1>
     <p class="author">BY <a href="https://about.me/henry.g" target="_blank">HENRY GREEN</a></p>
     <p class="author" id="user-status-text" style="margin-top: -10px;">LOGGED OUT (GUEST)</p>
 
@@ -285,10 +322,35 @@
     <button class="secondary close-modal-btn" style="width: 100%;">CLOSE</button>
   </div>
 
+  <!-- CHANGELOG MODAL -->
+  <div id="changelog-modal" class="modal hidden">
+    <h2>CHANGELOG (v1.0.0 Beta)</h2>
+    <div class="shop-grid" style="text-align: left; font-size: 0.5rem; line-height: 1.6; max-height: 200px; padding: 5px;">
+      <p>- Added Christmas seasonal branding (Auto reverts after Dec 26th!)</p>
+      <p>- Added Santa hats to birds</p>
+      <p>- Added endless background menu course loop</p>
+      <p>- Integrated interactive changelog pop-up</p>
+    </div>
+    <button class="secondary close-modal-btn" style="width: 100%;">CLOSE</button>
+  </div>
+
   <!-- Include Auth Module -->
   <script src="auth.js"></script>
 
   <script>
+    // Christmas Branding Check (Active through Dec 25th)
+    const now = new Date();
+    const isChristmasSeason = now.getMonth() === 11 && now.getDate() <= 26;
+
+    if (isChristmasSeason) {
+      document.documentElement.style.setProperty('--primary-color', '#d42426');
+      document.documentElement.style.setProperty('--primary-hover', '#e53b3d');
+      document.documentElement.style.setProperty('--accent-color', '#2e8b57');
+      document.documentElement.style.setProperty('--accent-hover', '#3cb371');
+      document.documentElement.style.setProperty('--title-color', '#d42426');
+      document.documentElement.style.setProperty('--title-shadow', '#2e8b57');
+    }
+
     const loadingScreen = document.getElementById('loading-screen');
     const menuScreen = document.getElementById('menu-screen');
     const gameScreen = document.getElementById('game-screen');
@@ -296,6 +358,7 @@
     const leaderboardModal = document.getElementById('leaderboard-modal');
     const campaignModal = document.getElementById('campaign-modal');
     const authModal = document.getElementById('auth-modal');
+    const changelogModal = document.getElementById('changelog-modal');
     const menuMusic = document.getElementById('menu-music');
     const shopMusic = document.getElementById('shop-music');
 
@@ -354,6 +417,71 @@
     let powerUpTimer = 0;
     let hasShield = false;
     let frameCount = 0;
+
+    // Background Menu Simulation Loop Setup
+    const menuBgCanvas = document.getElementById('menu-bg-canvas');
+    const menuBgCtx = menuBgCanvas.getContext('2d');
+    let bgPipes = [];
+    let bgBirdY = 150;
+    let bgBirdVel = 0;
+
+    function initMenuBackground() {
+      menuBgCanvas.width = window.innerWidth;
+      menuBgCanvas.height = window.innerHeight;
+      bgPipes = [];
+      for(let i=0; i<3; i++) {
+        bgPipes.push({ x: i * 250 + 300, top: Math.random() * 150 + 50, bottom: Math.random() * 150 + 200 });
+      }
+    }
+    window.addEventListener('resize', initMenuBackground);
+    initMenuBackground();
+
+    function renderMenuBackground() {
+      if (!menuScreen.classList.contains('hidden')) {
+        menuBgCtx.clearRect(0, 0, menuBgCanvas.width, menuBgCanvas.height);
+        
+        // Update & Draw Background Pipes
+        menuBgCtx.fillStyle = isChristmasSeason ? '#2e8b57' : '#38b764';
+        bgPipes.forEach(p => {
+          p.x -= 1.5;
+          if(p.x < -60) {
+            p.x = menuBgCanvas.width + 50;
+            p.top = Math.random() * 150 + 50;
+            p.bottom = p.top + 130;
+          }
+          menuBgCtx.fillRect(p.x, 0, 50, p.top);
+          menuBgCtx.fillRect(p.x, p.bottom, 50, menuBgCanvas.height - p.bottom);
+        });
+
+        // Update & Draw Background Bird
+        bgBirdVel += 0.25;
+        bgBirdY += bgBirdVel;
+        if(bgBirdY > menuBgCanvas.height / 2 + 50 || bgBirdY < menuBgCanvas.height / 2 - 50) {
+          bgBirdVel = -4;
+        }
+
+        let activeColor = skins.find(s => s.name === currentSkin)?.color || '#f8c038';
+        menuBgCtx.fillStyle = activeColor;
+        menuBgCtx.beginPath();
+        menuBgCtx.arc(100, bgBirdY, 14, 0, Math.PI * 2);
+        menuBgCtx.fill();
+
+        if (isChristmasSeason) {
+          menuBgCtx.fillStyle = '#d42426';
+          menuBgCtx.beginPath();
+          menuBgCtx.moveTo(100 - 10, bgBirdY - 10);
+          menuBgCtx.lineTo(100 + 10, bgBirdY - 10);
+          menuBgCtx.lineTo(100, bgBirdY - 26);
+          menuBgCtx.fill();
+        }
+      }
+      requestAnimationFrame(renderMenuBackground);
+    }
+    requestAnimationFrame(renderMenuBackground);
+
+    window.openChangelogModal = function() {
+      changelogModal.classList.remove('hidden');
+    }
 
     window.addEventListener('load', () => {
       let progress = 0;
@@ -468,6 +596,7 @@
         campaignModal.classList.add('hidden');
         authModal.classList.add('hidden');
         leaderboardModal.classList.add('hidden');
+        changelogModal.classList.add('hidden');
         shopMusic.pause();
         shopMusic.currentTime = 0;
         menuMusic.play().catch(() => {});
@@ -763,7 +892,7 @@
       ctx.fillStyle = '#3b5dc9';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = '#38b764';
+      ctx.fillStyle = isChristmasSeason ? '#2e8b57' : '#38b764';
       pipes.forEach(p => {
         ctx.fillRect(p.x, 0, 50, p.top);
         ctx.fillRect(p.x, p.bottom, 50, canvas.height - p.bottom);
@@ -792,6 +921,7 @@
       ctx.lineWidth = hasShield ? 4 : 2;
       ctx.stroke();
 
+      // Bird Eyes & Beak
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(bird.x + 3, bird.y - 6, 5, 5);
       ctx.fillStyle = '#181425';
@@ -799,6 +929,21 @@
 
       ctx.fillStyle = '#f77622';
       ctx.fillRect(bird.x + activeRadius - 2, bird.y - 2, 6, 5);
+
+      // Christmas Santa Hat on Bird
+      if (isChristmasSeason) {
+        ctx.fillStyle = '#d42426';
+        ctx.beginPath();
+        ctx.moveTo(bird.x - 8, bird.y - activeRadius);
+        ctx.lineTo(bird.x + 10, bird.y - activeRadius);
+        ctx.lineTo(bird.x, bird.y - activeRadius - 16);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(bird.x, bird.y - activeRadius - 16, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       if (gameOver) {
         renderLeaderboard();
