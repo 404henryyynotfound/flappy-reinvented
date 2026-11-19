@@ -5,20 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flappy Bird Reinvented | By Henry Green</title>
   
-  <!-- Link to your future CSS file -->
-  <link rel="stylesheet" href="style.css" />
+  <!-- Pixel Retro Font from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <style>
-    /* Basic built-in styling so it looks good right away before you make style.css */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Press Start 2P', monospace;
     }
 
     body {
-      background-color: #111827;
+      background-color: #000000;
       color: #ffffff;
       display: flex;
       justify-content: center;
@@ -27,7 +26,7 @@
       overflow: hidden;
     }
 
-    /* Fullscreen overlays for Loading & Menus */
+    /* Fullscreen overlays */
     .screen {
       position: absolute;
       inset: 0;
@@ -36,173 +35,196 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-      transition: opacity 0.5s ease;
+      background: #222034;
+      transition: transform 0.6s ease-in-out;
+    }
+
+    /* Slide off screen animation */
+    .screen.slide-out {
+      transform: translateY(-100%);
     }
 
     .hidden {
       display: none !important;
     }
 
-    /* Loading Screen Spinner */
+    /* Loading Spinner */
     .spinner {
-      width: 50px;
-      height: 50px;
-      border: 5px solid rgba(255, 255, 255, 0.2);
-      border-top-color: #38bdf8;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 20px;
+      width: 40px;
+      height: 40px;
+      border: 6px solid #f8f8f8;
+      border-top-color: #ff0044;
+      animation: spin 0.8s steps(8) infinite;
+      margin-bottom: 25px;
     }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
 
-    /* Main Title & Credits */
+    /* Retro Title & Credits */
     h1 {
-      font-size: 3rem;
-      letter-spacing: 2px;
-      color: #38bdf8;
-      text-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
-      margin-bottom: 8px;
+      font-size: 1.8rem;
+      line-height: 1.4;
+      color: #f77622;
+      text-shadow: 3px 3px #d95763;
+      margin-bottom: 12px;
+      padding: 0 20px;
     }
 
     .author {
-      font-size: 1.1rem;
-      color: #94a3b8;
+      font-size: 0.7rem;
+      color: #639bff;
       margin-bottom: 35px;
     }
 
-    /* Menu Buttons */
+    /* Retro Menu Buttons */
     .menu-buttons {
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      width: 260px;
+      gap: 16px;
+      width: 280px;
     }
 
     button {
-      padding: 14px 20px;
-      font-size: 1.1rem;
+      padding: 14px 10px;
+      font-size: 0.8rem;
       font-weight: bold;
-      border: none;
-      border-radius: 10px;
+      border: 4px solid #ffffff;
+      border-radius: 0px;
       cursor: pointer;
-      background-color: #38bdf8;
-      color: #0f172a;
-      transition: transform 0.15s ease, background-color 0.2s ease;
+      background-color: #38b764;
+      color: #ffffff;
+      box-shadow: 4px 4px #181425;
+      image-rendering: pixelated;
     }
 
     button:hover {
-      background-color: #7dd3fc;
-      transform: scale(1.04);
+      background-color: #41af6e;
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px #181425;
     }
 
     button.secondary {
-      background-color: #334155;
-      color: #f8fafc;
+      background-color: #29adff;
     }
 
     button.secondary:hover {
-      background-color: #475569;
+      background-color: #3cb3ff;
     }
 
-    /* Game Canvas */
+    /* Game Canvas Background */
+    #game-screen {
+      background: #5973e8; /* Retro sky blue */
+    }
+
     canvas {
-      border: 3px solid #38bdf8;
-      border-radius: 12px;
-      background-color: #020617;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      border: 4px solid #ffffff;
+      background-color: #3b5dc9;
+      box-shadow: 6px 6px #181425;
     }
 
-    /* Simple Pop-up Modal for Leaderboard / Account */
+    /* Score Display Box */
+    #score-display {
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      color: #ffcd75;
+      text-shadow: 2px 2px #181425;
+    }
+
+    /* Retro Modal Popups */
     .modal {
       position: absolute;
-      background: #1e293b;
-      border: 2px solid #38bdf8;
-      border-radius: 12px;
+      background: #222034;
+      border: 4px solid #ffffff;
       padding: 25px;
       width: 320px;
       text-align: center;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+      box-shadow: 8px 8px #181425;
     }
 
     .modal h2 {
-      margin-bottom: 15px;
-      color: #38bdf8;
+      font-size: 1rem;
+      margin-bottom: 20px;
+      color: #ffcd75;
     }
 
     .modal input {
       width: 100%;
       padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      border: 1px solid #475569;
-      background: #0f172a;
+      margin-bottom: 15px;
+      border: 2px solid #ffffff;
+      background: #181425;
       color: white;
+      font-size: 0.7rem;
     }
   </style>
 </head>
 <body>
 
-  <!-- 1. CUSTOM LOADING SCREEN -->
+  <!-- 8-Bit Retro Music Audio (Loops automatically) -->
+  <audio id="retro-music" loop>
+    <source src="https://actions.google.com/sounds/v1/ambiences/arcade_room.ogg" type="audio/ogg">
+  </audio>
+
+  <!-- 1. LOADING SCREEN -->
   <div id="loading-screen" class="screen">
     <div class="spinner"></div>
-    <h2>Flappy is loading...</h2>
+    <h2>LOADING...</h2>
   </div>
 
   <!-- 2. MAIN MENU SCREEN -->
   <div id="menu-screen" class="screen hidden">
     <h1>FLAPPY BIRD REINVENTED</h1>
-    <p class="author">by Henry Green</p>
+    <p class="author">BY HENRY GREEN</p>
 
     <div class="menu-buttons">
-      <button id="play-btn">Play Game</button>
-      <button id="upgrades-btn" class="secondary">Upgrades & Skins</button>
-      <button id="leaderboard-btn" class="secondary">Leaderboard</button>
-      <button id="account-btn" class="secondary">Account / Log In</button>
+      <button id="play-btn">PLAY GAME</button>
+      <button id="upgrades-btn" class="secondary">UPGRADES</button>
+      <button id="leaderboard-btn" class="secondary">SCORES</button>
+      <button id="account-btn" class="secondary">LOGIN</button>
     </div>
   </div>
 
-  <!-- 3. GAME SCREEN (CANVAS) -->
+  <!-- 3. GAME SCREEN -->
   <div id="game-screen" class="screen hidden">
-    <canvas id="gameCanvas" width="480" height="640"></canvas>
-    <button id="back-to-menu-btn" class="secondary" style="margin-top: 15px;">Back to Menu</button>
+    <div id="score-display">SCORE: 0</div>
+    <canvas id="gameCanvas" width="384" height="512"></canvas>
+    <button id="back-to-menu-btn" class="secondary" style="margin-top: 15px; width: 200px;">MENU</button>
   </div>
 
-  <!-- 4. ACCOUNT MODAL (Placeholder for auth.js) -->
+  <!-- 4. ACCOUNT MODAL -->
   <div id="account-modal" class="modal hidden">
-    <h2>Player Account</h2>
-    <input type="email" id="email-input" placeholder="Email" />
-    <input type="password" id="password-input" placeholder="Password" />
+    <h2>PLAYER LOGIN</h2>
+    <input type="email" id="email-input" placeholder="EMAIL" />
+    <input type="password" id="password-input" placeholder="PASS" />
     <div style="display: flex; gap: 10px; margin-top: 10px;">
-      <button id="login-submit-btn" style="flex: 1;">Log In</button>
-      <button id="signup-submit-btn" class="secondary" style="flex: 1;">Sign Up</button>
+      <button id="login-submit-btn" style="flex: 1;">LOGIN</button>
+      <button id="signup-submit-btn" class="secondary" style="flex: 1;">JOIN</button>
     </div>
-    <button class="secondary close-modal-btn" style="width: 100%; margin-top: 10px;">Close</button>
+    <button class="secondary close-modal-btn" style="width: 100%; margin-top: 15px;">CLOSE</button>
   </div>
 
-  <!-- 5. LEADERBOARD MODAL (Placeholder for database.js) -->
+  <!-- 5. LEADERBOARD MODAL -->
   <div id="leaderboard-modal" class="modal hidden">
-    <h2>Top Players</h2>
-    <ol id="leaderboard-list" style="text-align: left; margin: 15px 0 20px 25px; line-height: 1.8;">
-      <li>Henry Green — 100 pts</li>
-      <li>PlayerTwo — 75 pts</li>
-      <li>Guest — 40 pts</li>
+    <h2>TOP PLAYERS</h2>
+    <ol id="leaderboard-list" style="text-align: left; margin: 15px 0 20px 20px; font-size: 0.6rem; line-height: 2;">
+      <li>HENRY GREEN — 100</li>
+      <li>PLAYER TWO — 75</li>
+      <li>GUEST — 40</li>
     </ol>
-    <button class="secondary close-modal-btn" style="width: 100%;">Close</button>
+    <button class="secondary close-modal-btn" style="width: 100%;">CLOSE</button>
   </div>
 
-  <!-- Built-in Screen Switcher Script (Moves to game.js later) -->
   <script>
     const loadingScreen = document.getElementById('loading-screen');
     const menuScreen = document.getElementById('menu-screen');
     const gameScreen = document.getElementById('game-screen');
     const accountModal = document.getElementById('account-modal');
     const leaderboardModal = document.getElementById('leaderboard-modal');
+    const bgMusic = document.getElementById('retro-music');
 
-    // Simulate loading for 2 seconds, then show Main Menu
+    // Simulate loading, start music on first click/interaction
     window.addEventListener('load', () => {
       setTimeout(() => {
         loadingScreen.classList.add('hidden');
@@ -210,12 +232,26 @@
       }, 2000);
     });
 
-    // Button Controls
+    // Play retro music on user interaction (browsers block autoplay without a click)
+    document.addEventListener('click', () => {
+      if (bgMusic.paused) {
+        bgMusic.volume = 0.3;
+        bgMusic.play().catch(() => {});
+      }
+    }, { once: true });
+
+    // Play Button - Cleanly swipes menu up off the screen
     document.getElementById('play-btn').addEventListener('click', () => {
-      menuScreen.classList.add('hidden');
       gameScreen.classList.remove('hidden');
+      menuScreen.classList.add('slide-out');
+      
+      setTimeout(() => {
+        menuScreen.classList.add('hidden');
+        menuScreen.classList.remove('slide-out');
+      }, 600);
     });
 
+    // Back to Menu Button
     document.getElementById('back-to-menu-btn').addEventListener('click', () => {
       gameScreen.classList.add('hidden');
       menuScreen.classList.remove('hidden');
@@ -229,7 +265,6 @@
       leaderboardModal.classList.remove('hidden');
     });
 
-    // Close any open pop-up modal
     document.querySelectorAll('.close-modal-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         accountModal.classList.add('hidden');
@@ -237,10 +272,5 @@
       });
     });
   </script>
-
-  <!-- Link to your future JavaScript files -->
-  <script src="game.js"></script>
-  <script src="auth.js"></script>
-  <script src="database.js"></script>
 </body>
 </html>
