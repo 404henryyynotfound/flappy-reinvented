@@ -35,8 +35,8 @@ A modern, feature-packed take on the classic arcade game built with HTML5 Canvas
 ## Development Roadmap
 
 * [x] Custom loading screen (`Flappy is loading...`) and main menu UI
-* [ ] Core Flappy Bird physics, pipes, and collision detection (`game.js`)
-* [ ] Signature "reinvented" gameplay mechanics & power-ups
+* [x] Core Flappy Bird physics, pipes, and collision detection (`game.js`)
+* [x] Signature "reinvented" gameplay mechanics & power-ups
 * [ ] User account sign-up and login system (`auth.js`)
 * [ ] Cloud progress saving and live global leaderboard (`database.js`)
 
