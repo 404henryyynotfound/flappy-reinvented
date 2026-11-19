@@ -46,17 +46,22 @@
       display: none !important;
     }
 
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 6px solid #f8f8f8;
-      border-top-color: #ff0044;
-      animation: spin 0.8s steps(8) infinite;
-      margin-bottom: 25px;
+    /* Loading Bar Styles */
+    .progress-container {
+      width: 260px;
+      height: 24px;
+      border: 4px solid #ffffff;
+      background: #181425;
+      padding: 3px;
+      margin-top: 20px;
+      box-shadow: 4px 4px #000000;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background-color: #38b764;
+      transition: width 0.1s linear;
     }
 
     h1 {
@@ -210,8 +215,11 @@
 
   <!-- LOADING SCREEN -->
   <div id="loading-screen" class="screen">
-    <div class="spinner"></div>
-    <h2>LOADING...</h2>
+    <h2 style="font-size: 0.9rem; margin-bottom: 10px;">LOADING...</h2>
+    <div class="progress-container">
+      <div id="progress-bar" class="progress-bar"></div>
+    </div>
+    <p id="progress-text" style="font-size: 0.5rem; margin-top: 10px; color: #ffcd75;">0%</p>
   </div>
 
   <!-- MAIN MENU -->
@@ -323,7 +331,7 @@
       { id: 5, name: 'Level 5: Hurricane', target: 25, speed: 3.5, gap: 90 }
     ];
 
-    let currentMode = 'endless'; // 'endless' or 'campaign'
+    let currentMode = 'endless'; 
     let activeLevel = 1;
     let score = 0;
     let sessionRobins = 0;
@@ -341,12 +349,28 @@
     let hasShield = false;
     let frameCount = 0;
 
+    // Loading Bar Animation Sequence
     window.addEventListener('load', () => {
       document.getElementById('username-input').value = playerName;
-      setTimeout(() => {
-        loadingScreen.classList.add('hidden');
-        menuScreen.classList.remove('hidden');
-      }, 1500);
+      
+      let progress = 0;
+      const bar = document.getElementById('progress-bar');
+      const text = document.getElementById('progress-text');
+
+      let loadInterval = setInterval(() => {
+        progress += 2;
+        bar.style.width = progress + '%';
+        text.textContent = progress + '%';
+
+        if (progress >= 100) {
+          clearInterval(loadInterval);
+          setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+            menuScreen.classList.remove('hidden');
+          }, 300);
+        }
+      }, 25);
+
       updateUI();
     });
 
@@ -357,7 +381,6 @@
       }
     }, { once: true });
 
-    // Menu Navigation Events
     document.getElementById('play-btn').addEventListener('click', () => {
       currentMode = 'endless';
       startSession();
@@ -414,7 +437,6 @@
       });
     });
 
-    // Control triggers
     window.addEventListener('keydown', e => {
       if ((e.code === 'Space' || e.code === 'ArrowUp') && gameRunning) {
         bird.velocity = bird.lift;
@@ -461,7 +483,6 @@
       document.getElementById('powerup-display').textContent = activePowerUp ? `PWR: ${activePowerUp}` : `PWR: NONE`;
     }
 
-    // Shop tabs handler
     window.switchShopTab = function(tab) {
       const list = document.getElementById('shop-list');
       list.innerHTML = '';
@@ -572,7 +593,6 @@
         { name: 'GUEST_USER', score: 10 }
       ];
       
-      // Update or insert current player score
       let existing = scores.find(s => s.name === playerName);
       if (existing) {
         if (score > existing.score) existing.score = score;
@@ -584,7 +604,7 @@
 
       const list = document.getElementById('leaderboard-list');
       list.innerHTML = '';
-      scores.slice(0, 5 ব্যতিক্রম).forEach((entry, idx) => {
+      scores.slice(0, 5).forEach((entry, idx) => {
         const item = document.createElement('div');
         item.className = 'shop-item';
         item.innerHTML = `<span>#${idx+1} ${entry.name}</span><span>${entry.score} PTS</span>`;
@@ -595,13 +615,11 @@
     function loop() {
       if (!gameRunning) return;
 
-      // Physics settings
       let gravity = bird.gravity;
       if (purchasedPerks.includes('slow_fall')) gravity = 0.32;
       bird.velocity += gravity;
       bird.y += bird.velocity;
 
-      // Level parameters
       let speed = 2.5;
       let gap = 120;
       if (currentMode === 'campaign') {
@@ -610,7 +628,6 @@
         gap = lvlData.gap;
       }
 
-      // Pipe & Power-up generation
       if (frameCount % 90 === 0) {
         let topHeight = Math.floor(Math.random() * 180) + 50;
         pipes.push({
@@ -620,7 +637,6 @@
           passed: false
         });
 
-        // Chance to spawn powerup in gap
         if (Math.random() < 0.4) {
           let pType = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
           powerUpsOnScreen.push({
@@ -633,7 +649,6 @@
         }
       }
 
-      // Move pipes
       for (let i = pipes.length - 1; i >= 0; i--) {
         pipes[i].x -= speed;
 
@@ -646,7 +661,6 @@
           localStorage.setItem('flappy_robins', robins);
           updateUI();
 
-          // Campaign Win Check
           if (currentMode === 'campaign' && score >= levels[activeLevel - 1].target) {
             gameRunning = false;
             gameOver = true;
@@ -657,7 +671,6 @@
           }
         }
 
-        // Collision detection
         let currentRadius = activePowerUp === 'shrink' ? 9 : bird.radius;
         if (
           bird.x + currentRadius > pipes[i].x &&
@@ -666,7 +679,7 @@
         ) {
           if (hasShield) {
             hasShield = false;
-            pipes.splice(i, 1); // clear obstacle safely
+            pipes.splice(i, 1);
           } else {
             gameRunning = false;
             gameOver = true;
@@ -676,16 +689,14 @@
         if (pipes[i].x < -50) pipes.splice(i, 1);
       }
 
-      // Move and collect powerups
       for (let i = powerUpsOnScreen.length - 1; i >= 0; i--) {
         powerUpsOnScreen[i].x -= speed;
         let p = powerUpsOnScreen[i];
         
-        // Check collection
         let dist = Math.hypot(bird.x - p.x, bird.y - p.y);
         if (dist < bird.radius + p.radius) {
           activePowerUp = p.type;
-          powerUpTimer = 300; // duration frames
+          powerUpTimer = 300;
           powerUpsOnScreen.splice(i, 1);
           updateUI();
         } else if (p.x < -20) {
@@ -701,7 +712,6 @@
         }
       }
 
-      // Ground or ceiling collision
       let activeRadius = activePowerUp === 'shrink' ? 9 : bird.radius;
       if (bird.y + activeRadius > canvas.height || bird.y - activeRadius < 0) {
         if (hasShield) {
@@ -713,11 +723,9 @@
         }
       }
 
-      // RENDER SCENE
       ctx.fillStyle = '#3b5dc9';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw Pipes
       ctx.fillStyle = '#38b764';
       pipes.forEach(p => {
         ctx.fillRect(p.x, 0, 50, p.top);
@@ -728,7 +736,6 @@
         ctx.strokeRect(p.x, p.bottom, 50, canvas.height - p.bottom);
       });
 
-      // Draw Power-ups on screen
       powerUpsOnScreen.forEach(p => {
         ctx.fillStyle = p.type === 'shield' ? '#29adff' : p.type === 'double' ? '#ffcd75' : '#38b764';
         ctx.beginPath();
@@ -739,7 +746,6 @@
         ctx.stroke();
       });
 
-      // Draw Detailed Bird
       let activeColor = skins.find(s => s.name === currentSkin)?.color || '#f8c038';
       ctx.fillStyle = activeColor;
       ctx.beginPath();
@@ -749,13 +755,11 @@
       ctx.lineWidth = hasShield ? 4 : 2;
       ctx.stroke();
 
-      // Eye
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(bird.x + 3, bird.y - 6, 5, 5);
       ctx.fillStyle = '#181425';
       ctx.fillRect(bird.x + 5, bird.y - 5, 2, 2);
 
-      // Beak
       ctx.fillStyle = '#f77622';
       ctx.fillRect(bird.x + activeRadius - 2, bird.y - 2, 6, 5);
 
