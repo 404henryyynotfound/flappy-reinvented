@@ -46,14 +46,14 @@
       display: none !important;
     }
 
-    /* Menu background canvas for endless video simulation */
+    /* Menu background canvas for endless course simulation */
     #menu-bg-canvas {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       z-index: 0;
-      opacity: 0.4;
+      opacity: 0.5;
       pointer-events: none;
     }
 
@@ -328,8 +328,8 @@
     <div class="shop-grid" style="text-align: left; font-size: 0.5rem; line-height: 1.6; max-height: 200px; padding: 5px;">
       <p>- Added Christmas seasonal branding (Auto reverts after Dec 26th!)</p>
       <p>- Added Santa hats to birds</p>
-      <p>- Added endless background menu course loop</p>
-      <p>- Integrated interactive changelog pop-up</p>
+      <p>- Endless background menu course with flawless bird flight simulation</p>
+      <p>- Interactive changelog pop-up via version badge</p>
     </div>
     <button class="secondary close-modal-btn" style="width: 100%;">CLOSE</button>
   </div>
@@ -338,7 +338,7 @@
   <script src="auth.js"></script>
 
   <script>
-    // Christmas Branding Check (Active through Dec 25th)
+    // Christmas Branding Check (Active through Dec 26th)
     const now = new Date();
     const isChristmasSeason = now.getMonth() === 11 && now.getDate() <= 26;
 
@@ -418,19 +418,23 @@
     let hasShield = false;
     let frameCount = 0;
 
-    // Background Menu Simulation Loop Setup
+    // Background Menu Flawless Flight Course Simulation Setup
     const menuBgCanvas = document.getElementById('menu-bg-canvas');
     const menuBgCtx = menuBgCanvas.getContext('2d');
     let bgPipes = [];
-    let bgBirdY = 150;
-    let bgBirdVel = 0;
+    let bgBird = { x: 120, y: 200, velocity: 0, targetY: 200 };
 
     function initMenuBackground() {
       menuBgCanvas.width = window.innerWidth;
       menuBgCanvas.height = window.innerHeight;
       bgPipes = [];
-      for(let i=0; i<3; i++) {
-        bgPipes.push({ x: i * 250 + 300, top: Math.random() * 150 + 50, bottom: Math.random() * 150 + 200 });
+      for (let i = 0; i < 4; i++) {
+        let topH = Math.floor(Math.random() * 120) + 60;
+        bgPipes.push({
+          x: i * 300 + 400,
+          top: topH,
+          bottom: topH + 150
+        });
       }
     }
     window.addEventListener('resize', initMenuBackground);
@@ -438,40 +442,66 @@
 
     function renderMenuBackground() {
       if (!menuScreen.classList.contains('hidden')) {
-        menuBgCtx.clearRect(0, 0, menuBgCanvas.width, menuBgCanvas.height);
-        
-        // Update & Draw Background Pipes
+        menuBgCtx.fillStyle = '#3b5dc9';
+        menuBgCtx.fillRect(0, 0, menuBgCanvas.width, menuBgCanvas.height);
+
+        // Update and draw background pipes
         menuBgCtx.fillStyle = isChristmasSeason ? '#2e8b57' : '#38b764';
         bgPipes.forEach(p => {
-          p.x -= 1.5;
-          if(p.x < -60) {
-            p.x = menuBgCanvas.width + 50;
-            p.top = Math.random() * 150 + 50;
-            p.bottom = p.top + 130;
+          p.x -= 2;
+          if (p.x < -80) {
+            p.x = menuBgCanvas.width + 100;
+            p.top = Math.floor(Math.random() * 120) + 60;
+            p.bottom = p.top + 150;
           }
-          menuBgCtx.fillRect(p.x, 0, 50, p.top);
-          menuBgCtx.fillRect(p.x, p.bottom, 50, menuBgCanvas.height - p.bottom);
+          menuBgCtx.fillRect(p.x, 0, 60, p.top);
+          menuBgCtx.fillRect(p.x, p.bottom, 60, menuBgCanvas.height - p.bottom);
+          menuBgCtx.strokeStyle = '#ffffff';
+          menuBgCtx.lineWidth = 3;
+          menuBgCtx.strokeRect(p.x, 0, 60, p.top);
+          menuBgCtx.strokeRect(p.x, p.bottom, 60, menuBgCanvas.height - p.bottom);
         });
 
-        // Update & Draw Background Bird
-        bgBirdVel += 0.25;
-        bgBirdY += bgBirdVel;
-        if(bgBirdY > menuBgCanvas.height / 2 + 50 || bgBirdY < menuBgCanvas.height / 2 - 50) {
-          bgBirdVel = -4;
+        // Flawless Navigation: Target upcoming pipe gap center automatically
+        let nextPipe = bgPipes.find(p => p.x + 60 > bgBird.x);
+        if (nextPipe) {
+          bgBird.targetY = (nextPipe.top + nextPipe.bottom) / 2;
         }
 
+        // Smoothly adjust bird position toward gap center
+        bgBird.y += (bgBird.targetY - bgBird.y) * 0.08;
+
+        // Draw Bird
         let activeColor = skins.find(s => s.name === currentSkin)?.color || '#f8c038';
         menuBgCtx.fillStyle = activeColor;
         menuBgCtx.beginPath();
-        menuBgCtx.arc(100, bgBirdY, 14, 0, Math.PI * 2);
+        menuBgCtx.arc(bgBird.x, bgBird.y, 14, 0, Math.PI * 2);
         menuBgCtx.fill();
+        menuBgCtx.strokeStyle = '#ffffff';
+        menuBgCtx.lineWidth = 2;
+        menuBgCtx.stroke();
 
+        // Bird Eye & Beak
+        menuBgCtx.fillStyle = '#ffffff';
+        menuBgCtx.fillRect(bgBird.x + 3, bgBird.y - 6, 5, 5);
+        menuBgCtx.fillStyle = '#181425';
+        menuBgCtx.fillRect(bgBird.x + 5, bgBird.y - 5, 2, 2);
+
+        menuBgCtx.fillStyle = '#f77622';
+        menuBgCtx.fillRect(bgBird.x + 12, bgBird.y - 2, 6, 5);
+
+        // Santa Hat on Menu Bird
         if (isChristmasSeason) {
           menuBgCtx.fillStyle = '#d42426';
           menuBgCtx.beginPath();
-          menuBgCtx.moveTo(100 - 10, bgBirdY - 10);
-          menuBgCtx.lineTo(100 + 10, bgBirdY - 10);
-          menuBgCtx.lineTo(100, bgBirdY - 26);
+          menuBgCtx.moveTo(bgBird.x - 8, bgBird.y - 14);
+          menuBgCtx.lineTo(bgBird.x + 10, bgBird.y - 14);
+          menuBgCtx.lineTo(bgBird.x, bgBird.y - 30);
+          menuBgCtx.fill();
+
+          menuBgCtx.fillStyle = '#ffffff';
+          menuBgCtx.beginPath();
+          menuBgCtx.arc(bgBird.x, bgBird.y - 30, 3, 0, Math.PI * 2);
           menuBgCtx.fill();
         }
       }
