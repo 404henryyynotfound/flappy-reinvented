@@ -260,7 +260,7 @@
   </audio>
 
   <!-- Version Tag -->
-  <div id="version-tag" onclick="openChangelogModal()">v1.0.0 Beta</div>
+  <div id="version-tag" onclick="openChangelogModal()">v1.0.1 Beta</div>
 
   <!-- LOADING SCREEN -->
   <div id="loading-screen" class="screen">
@@ -343,13 +343,12 @@
 
   <!-- CHANGELOG MODAL -->
   <div id="changelog-modal" class="modal hidden">
-    <h2>CHANGELOG (v1.0.0 Beta)</h2>
+    <h2>CHANGELOG (v1.0.1 Beta)</h2>
     <div class="shop-grid" style="text-align: left; font-size: 0.5rem; line-height: 1.6; max-height: 200px; padding: 5px;">
+      <p>- Fixed leaderboard to accurately track and update live player scores without placeholders</p>
       <p>- Added Christmas seasonal red & green branding (Auto reverts after Dec 26th!)</p>
       <p>- Added Santa hats to birds</p>
       <p>- Added feature request announcement banner</p>
-      <p>- Endless background menu course with flawless bird flight simulation</p>
-      <p>- Interactive changelog pop-up via version badge</p>
     </div>
     <button class="secondary close-modal-btn" style="width: 100%;">CLOSE</button>
   </div>
@@ -803,25 +802,37 @@
       startSession();
     }
 
-    function renderLeaderboard() {
-      let scores = JSON.parse(localStorage.getItem('flappy_leaderboard')) || [
-        { name: 'HENRY GREEN', score: 42 },
-        { name: 'CYBERPUNK99', score: 30 }
-      ];
-      
+    function submitScoreToLeaderboard() {
+      let scores = JSON.parse(localStorage.getItem('flappy_leaderboard')) || [];
       let playerName = (db && db.currentUser) ? db.currentUser.toUpperCase() : 'GUEST';
+      
       let existing = scores.find(s => s.name === playerName);
       if (existing) {
-        if (score > existing.score) existing.score = score;
+        if (score > existing.score) {
+          existing.score = score;
+        }
       } else {
         scores.push({ name: playerName, score: score });
       }
+      
       scores.sort((a, b) => b.score - a.score);
       localStorage.setItem('flappy_leaderboard', JSON.stringify(scores));
+    }
 
+    function renderLeaderboard() {
+      let scores = JSON.parse(localStorage.getItem('flappy_leaderboard')) || [];
       const list = document.getElementById('leaderboard-list');
       list.innerHTML = '';
-      scores.slice(0, 5).forEach((entry, idx) => {
+
+      if (scores.length === 0) {
+        const item = document.createElement('div');
+        item.className = 'shop-item';
+        item.innerHTML = `<span>NO SCORES YET</span><span>0 PTS</span>`;
+        list.appendChild(item);
+        return;
+      }
+
+      scores.slice(0, 10).forEach((entry, idx) => {
         const item = document.createElement('div');
         item.className = 'shop-item';
         item.innerHTML = `<span>#${idx+1} ${entry.name}</span><span>${entry.score} PTS</span>`;
@@ -881,6 +892,7 @@
           if (currentMode === 'campaign' && score >= levels[activeLevel - 1].target) {
             gameRunning = false;
             gameOver = true;
+            submitScoreToLeaderboard();
             if (activeLevel + 1 > unlockedLevels && activeLevel < levels.length) {
               unlockedLevels = activeLevel + 1;
               saveCurrentState();
@@ -900,6 +912,7 @@
           } else {
             gameRunning = false;
             gameOver = true;
+            submitScoreToLeaderboard();
           }
         }
 
@@ -937,6 +950,7 @@
         } else {
           gameRunning = false;
           gameOver = true;
+          submitScoreToLeaderboard();
         }
       }
 
@@ -997,7 +1011,6 @@
       }
 
       if (gameOver) {
-        renderLeaderboard();
         ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
