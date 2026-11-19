@@ -62,6 +62,19 @@
       position: relative;
     }
 
+    /* Announcement Banner */
+    .announcement-banner {
+      background-color: var(--banner-bg, #29adff);
+      color: #ffffff;
+      font-size: 0.45rem;
+      padding: 8px 12px;
+      border: 2px solid #ffffff;
+      margin-bottom: 15px;
+      max-width: 320px;
+      line-height: 1.4;
+      box-shadow: 3px 3px #181425;
+    }
+
     .progress-container {
       width: 260px;
       height: 24px;
@@ -80,7 +93,7 @@
     }
 
     h1 {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       line-height: 1.4;
       color: var(--title-color, #f77622);
       text-shadow: 3px 3px var(--title-shadow, #d95763);
@@ -235,7 +248,7 @@
     }
   </style>
 </head>
-<body style="--primary-color: #38b764; --primary-hover: #41af6e; --accent-color: #f77622; --accent-hover: #ff8c3b; --title-color: #f77622; --title-shadow: #d95763;">
+<body style="--primary-color: #38b764; --primary-hover: #41af6e; --accent-color: #f77622; --accent-hover: #ff8c3b; --title-color: #f77622; --title-shadow: #d95763; --banner-bg: #29adff;">
 
   <!-- Audio Tracks -->
   <audio id="menu-music" loop>
@@ -261,6 +274,12 @@
   <!-- MAIN MENU -->
   <div id="menu-screen" class="screen hidden">
     <canvas id="menu-bg-canvas"></canvas>
+    
+    <!-- Announcement Banner -->
+    <div class="announcement-banner">
+      We need your help! Email greenhenry441@gmail.com with feature requests!
+    </div>
+
     <h1 id="main-title">FLAPPY BIRD REINVENTED</h1>
     <p class="author">BY <a href="https://about.me/henry.g" target="_blank">HENRY GREEN</a></p>
     <p class="author" id="user-status-text" style="margin-top: -10px;">LOGGED OUT (GUEST)</p>
@@ -326,8 +345,9 @@
   <div id="changelog-modal" class="modal hidden">
     <h2>CHANGELOG (v1.0.0 Beta)</h2>
     <div class="shop-grid" style="text-align: left; font-size: 0.5rem; line-height: 1.6; max-height: 200px; padding: 5px;">
-      <p>- Added Christmas seasonal branding (Auto reverts after Dec 26th!)</p>
+      <p>- Added Christmas seasonal red & green branding (Auto reverts after Dec 26th!)</p>
       <p>- Added Santa hats to birds</p>
+      <p>- Added feature request announcement banner</p>
       <p>- Endless background menu course with flawless bird flight simulation</p>
       <p>- Interactive changelog pop-up via version badge</p>
     </div>
@@ -338,17 +358,18 @@
   <script src="auth.js"></script>
 
   <script>
-    // Christmas Branding Check (Active through Dec 26th)
+    // Christmas Branding Check (Active through Dec 26th, auto-reverts after)
     const now = new Date();
     const isChristmasSeason = now.getMonth() === 11 && now.getDate() <= 26;
 
     if (isChristmasSeason) {
-      document.documentElement.style.setProperty('--primary-color', '#d42426');
+      document.documentElement.style.setProperty('--primary-color', '#d42426');      // Christmas Red
       document.documentElement.style.setProperty('--primary-hover', '#e53b3d');
-      document.documentElement.style.setProperty('--accent-color', '#2e8b57');
+      document.documentElement.style.setProperty('--accent-color', '#2e8b57');       // Christmas Green
       document.documentElement.style.setProperty('--accent-hover', '#3cb371');
-      document.documentElement.style.setProperty('--title-color', '#d42426');
-      document.documentElement.style.setProperty('--title-shadow', '#2e8b57');
+      document.documentElement.style.setProperty('--title-color', '#d42426');      // Red Title
+      document.documentElement.style.setProperty('--title-shadow', '#2e8b57');     // Green Shadow
+      document.documentElement.style.setProperty('--banner-bg', '#d42426');        // Red Banner
     }
 
     const loadingScreen = document.getElementById('loading-screen');
