@@ -274,8 +274,8 @@
     <button class="secondary close-modal-btn" style="width: 100%;">CLOSE</button>
   </div>
 
-  <!-- Include Database Module -->
-  <script src="database.js"></script>
+  <!-- Include Auth Module -->
+  <script src="auth.js"></script>
 
   <script>
     const loadingScreen = document.getElementById('loading-screen');
@@ -319,11 +319,11 @@
     ];
 
     const levels = [
-      { id: 1, name: 'Level 1: Breeze', target: 5, speed: 2.3, gap: 130 },
-      { id: 2, name: 'Level 2: Gusty', target: 10, speed: 2.6, gap: 120 },
-      { id: 3, name: 'Level 3: Storm', target: 15, speed: 2.9, gap: 110 },
-      { id: 4, name: 'Level 4: Typhoon', target: 20, speed: 3.2, gap: 100 },
-      { id: 5, name: 'Level 5: Hurricane', target: 25, speed: 3.5, gap: 90 }
+      { id: 1, name: 'Level 1: Breeze', target: 5, speed: 1.6, gap: 145 },
+      { id: 2, name: 'Level 2: Gusty', target: 10, speed: 1.9, gap: 135 },
+      { id: 3, name: 'Level 3: Storm', target: 15, speed: 2.2, gap: 125 },
+      { id: 4, name: 'Level 4: Typhoon', target: 20, speed: 2.5, gap: 115 },
+      { id: 5, name: 'Level 5: Hurricane', target: 25, speed: 2.8, gap: 105 }
     ];
 
     let currentMode = 'endless';
@@ -336,7 +336,8 @@
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    let bird = { x: 60, y: 240, radius: 14, gravity: 0.4, lift: -7, velocity: 0 };
+    // Slower gravity and lighter lift for much smoother control
+    let bird = { x: 60, y: 240, radius: 14, gravity: 0.3, lift: -6, velocity: 0 };
     let pipes = [];
     let powerUpsOnScreen = [];
     let activePowerUp = null;
@@ -365,7 +366,6 @@
       }, 25);
     });
 
-    // Play Main Menu music on first click
     document.addEventListener('click', () => {
       if (menuMusic.paused && shopMusic.paused && menuScreen.classList.contains('hidden') === false) {
         menuMusic.volume = 0.3;
@@ -374,7 +374,7 @@
     }, { once: true });
 
     function loadUserDataToState() {
-      if (db.currentUser) {
+      if (db && db.currentUser) {
         let uData = db.getUserData();
         if (uData) {
           robins = uData.robins;
@@ -387,7 +387,7 @@
     }
 
     function saveCurrentState() {
-      if (db.currentUser) {
+      if (db && db.currentUser) {
         db.saveUserData({ robins, unlockedSkins, currentSkin, unlockedLevels, purchasedPerks });
       }
     }
@@ -507,8 +507,8 @@
     }
 
     function updateUI() {
-      let statusText = db.currentUser ? `LOGGED IN: ${db.currentUser.toUpperCase()}` : `LOGGED OUT (GUEST)`;
-      document.getElementById('user-status-text').textContent = statusText;
+      let username = (db && db.currentUser) ? db.currentUser.toUpperCase() : 'GUEST';
+      document.getElementById('user-status-text').textContent = `LOGGED IN AS: ${username}`;
       document.getElementById('robins-display').textContent = `ROBINS: ${robins} 🐦`;
       document.getElementById('score-display').textContent = currentMode === 'campaign' ? `GOAL: ${levels[activeLevel-1].target}` : `SCORE: ${score}`;
       document.getElementById('powerup-display').textContent = activePowerUp ? `PWR: ${activePowerUp}` : `PWR: NONE`;
@@ -619,7 +619,7 @@
         { name: 'CYBERPUNK99', score: 30 }
       ];
       
-      let playerName = db.currentUser ? db.currentUser.toUpperCase() : 'GUEST';
+      let playerName = (db && db.currentUser) ? db.currentUser.toUpperCase() : 'GUEST';
       let existing = scores.find(s => s.name === playerName);
       if (existing) {
         if (score > existing.score) existing.score = score;
@@ -643,20 +643,21 @@
       if (!gameRunning) return;
 
       let gravity = bird.gravity;
-      if (purchasedPerks.includes('slow_fall')) gravity = 0.32;
+      if (purchasedPerks.includes('slow_fall')) gravity = 0.22;
       bird.velocity += gravity;
       bird.y += bird.velocity;
 
-      let speed = 2.5;
-      let gap = 120;
+      // Slower baseline speed and wider gaps
+      let speed = 1.7;
+      let gap = 145;
       if (currentMode === 'campaign') {
         let lvlData = levels[activeLevel - 1];
         speed = lvlData.speed;
         gap = lvlData.gap;
       }
 
-      if (frameCount % 90 === 0) {
-        let topHeight = Math.floor(Math.random() * 180) + 50;
+      if (frameCount % 110 === 0) {
+        let topHeight = Math.floor(Math.random() * 160) + 50;
         pipes.push({
           x: canvas.width,
           top: topHeight,
@@ -723,7 +724,7 @@
         let dist = Math.hypot(bird.x - p.x, bird.y - p.y);
         if (dist < bird.radius + p.radius) {
           activePowerUp = p.type;
-          powerUpTimer = 300;
+          powerUpTimer = 350;
           powerUpsOnScreen.splice(i, 1);
           updateUI();
         } else if (p.x < -20) {
