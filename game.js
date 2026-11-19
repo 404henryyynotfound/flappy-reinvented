@@ -56,8 +56,8 @@ const sfx = {
     playTone(pitch, 0.07, 'square', 0.06);
     setTimeout(() => playTone(pitch * 1.25, 0.13, 'square', 0.06), 60);
   },
-  fever: () => {
-    [523, 659, 784, 1046, 1318].forEach((f, i) => {
+    fever: () => {
+    [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, i) => {
       setTimeout(() => playTone(f, 0.12, 'square', 0.08), i * 55);
     });
   },
