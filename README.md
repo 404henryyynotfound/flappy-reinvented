@@ -6,7 +6,7 @@ A modern, feature-packed take on the classic arcade game built with HTML5 Canvas
 
 ## Play Online
 
-* **Live Game:** *(Add your GitHub Pages or Surge link here once deployed)*
+* **Live Game:** [Flappy Bird Reinvented](https://flappy-reinvented.surge.sh)
 * **Developer Portfolio:** [Xelotics Games](https://xelotics.surge.sh)
 
 ## Planned Features
