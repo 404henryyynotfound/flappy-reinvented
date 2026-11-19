@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flappy Bird Reinvented | By Henry Green</title>
+  
+  <!-- Link to your future CSS file -->
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* Basic built-in styling so it looks good right away before you make style.css */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #111827;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Fullscreen overlays for Loading & Menus */
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      transition: opacity 0.5s ease;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Loading Screen Spinner */
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 255, 255, 0.2);
+      border-top-color: #38bdf8;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Main Title & Credits */
+    h1 {
+      font-size: 3rem;
+      letter-spacing: 2px;
+      color: #38bdf8;
+      text-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+      margin-bottom: 8px;
+    }
+
+    .author {
+      font-size: 1.1rem;
+      color: #94a3b8;
+      margin-bottom: 35px;
+    }
+
+    /* Menu Buttons */
+    .menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 260px;
+    }
+
+    button {
+      padding: 14px 20px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background-color: #38bdf8;
+      color: #0f172a;
+      transition: transform 0.15s ease, background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #7dd3fc;
+      transform: scale(1.04);
+    }
+
+    button.secondary {
+      background-color: #334155;
+      color: #f8fafc;
+    }
+
+    button.secondary:hover {
+      background-color: #475569;
+    }
+
+    /* Game Canvas */
+    canvas {
+      border: 3px solid #38bdf8;
+      border-radius: 12px;
+      background-color: #020617;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Simple Pop-up Modal for Leaderboard / Account */
+    .modal {
+      position: absolute;
+      background: #1e293b;
+      border: 2px solid #38bdf8;
+      border-radius: 12px;
+      padding: 25px;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+    }
+
+    .modal h2 {
+      margin-bottom: 15px;
+      color: #38bdf8;
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. CUSTOM LOADING SCREEN -->
+  <div id="loading-screen" class="screen">
+    <div class="spinner"></div>
+    <h2>Flappy is loading...</h2>
+  </div>
+
+  <!-- 2. MAIN MENU SCREEN -->
+  <div id="menu-screen" class="screen hidden">
+    <h1>FLAPPY BIRD REINVENTED</h1>
+    <p class="author">by Henry Green</p>
+
+    <div class="menu-buttons">
+      <button id="play-btn">Play Game</button>
+      <button id="upgrades-btn" class="secondary">Upgrades & Skins</button>
+      <button id="leaderboard-btn" class="secondary">Leaderboard</button>
+      <button id="account-btn" class="secondary">Account / Log In</button>
+    </div>
+  </div>
+
+  <!-- 3. GAME SCREEN (CANVAS) -->
+  <div id="game-screen" class="screen hidden">
+    <canvas id="gameCanvas" width="480" height="640"></canvas>
+    <button id="back-to-menu-btn" class="secondary" style="margin-top: 15px;">Back to Menu</button>
+  </div>
+
+  <!-- 4. ACCOUNT MODAL (Placeholder for auth.js) -->
+  <div id="account-modal" class="modal hidden">
+    <h2>Player Account</h2>
+    <input type="email" id="email-input" placeholder="Email" />
+    <input type="password" id="password-input" placeholder="Password" />
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+      <button id="login-submit-btn" style="flex: 1;">Log In</button>
+      <button id="signup-submit-btn" class="secondary" style="flex: 1;">Sign Up</button>
+    </div>
+    <button class="secondary close-modal-btn" style="width: 100%; margin-top: 10px;">Close</button>
+  </div>
+
+  <!-- 5. LEADERBOARD MODAL (Placeholder for database.js) -->
+  <div id="leaderboard-modal" class="modal hidden">
+    <h2>Top Players</h2>
+    <ol id="leaderboard-list" style="text-align: left; margin: 15px 0 20px 25px; line-height: 1.8;">
+      <li>Henry Green — 100 pts</li>
+      <li>PlayerTwo — 75 pts</li>
+      <li>Guest — 40 pts</li>
+    </ol>
+    <button class="secondary close-modal-btn" style="width: 100%;">Close</button>
+  </div>
+
+  <!-- Built-in Screen Switcher Script (Moves to game.js later) -->
+  <script>
+    const loadingScreen = document.getElementById('loading-screen');
+    const menuScreen = document.getElementById('menu-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const accountModal = document.getElementById('account-modal');
+    const leaderboardModal = document.getElementById('leaderboard-modal');
+
+    // Simulate loading for 2 seconds, then show Main Menu
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        loadingScreen.classList.add('hidden');
+        menuScreen.classList.remove('hidden');
+      }, 2000);
+    });
+
+    // Button Controls
+    document.getElementById('play-btn').addEventListener('click', () => {
+      menuScreen.classList.add('hidden');
+      gameScreen.classList.remove('hidden');
+    });
+
+    document.getElementById('back-to-menu-btn').addEventListener('click', () => {
+      gameScreen.classList.add('hidden');
+      menuScreen.classList.remove('hidden');
+    });
+
+    document.getElementById('account-btn').addEventListener('click', () => {
+      accountModal.classList.remove('hidden');
+    });
+
+    document.getElementById('leaderboard-btn').addEventListener('click', () => {
+      leaderboardModal.classList.remove('hidden');
+    });
+
+    // Close any open pop-up modal
+    document.querySelectorAll('.close-modal-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        accountModal.classList.add('hidden');
+        leaderboardModal.classList.add('hidden');
+      });
+    });
+  </script>
+
+  <!-- Link to your future JavaScript files -->
+  <script src="game.js"></script>
+  <script src="auth.js"></script>
+  <script src="database.js"></script>
+</body>
+</html>
