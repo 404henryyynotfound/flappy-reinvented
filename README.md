@@ -29,7 +29,7 @@ A modern, feature-packed take on the classic arcade game built with HTML5 Canvas
 ## Tech Stack
 
 * **Frontend:** HTML5 Canvas, CSS3, Vanilla JavaScript
-* **Hosting:** GitHub Pages
+* **Hosting:** Surge.sh
 * **Backend / Database:** Firebase or Supabase *(for accounts & leaderboards)*
 
 ## Development Roadmap
