@@ -40,8 +40,8 @@ What can be done to make an old 80s arcade game interesting to kids again?
 * [x] Custom loading screen (`Flappy is loading...`) and main menu UI
 * [x] Core Flappy Bird physics, pipes, and collision detection (`game.js`)
 * [x] Signature "reinvented" gameplay mechanics & power-ups
-* [ ] User account sign-up and login system (`auth.js`)
-* [ ] Cloud progress saving and live global leaderboard (`database.js`)
+* [x] User account sign-up and login system (`auth.js`)
+* [x] Cloud progress saving and live global leaderboard (`database.js`)
 
 ## Contact
 
