@@ -2,7 +2,7 @@
 
 **Created by Henry Green, a gifted and talented student doing a passion project:)**
 
-A modern, feature-packed take on the classic arcade game built with HTML5 Canvas, CSS, and JavaScript. Includes custom loading screens, player accounts, cloud-saved progress, upgrades, and a global leaderboard. 
+An closed open-source, modern, feature-packed take on the classic arcade game built with HTML5 Canvas, CSS, and JavaScript. Includes custom loading screens, player accounts, cloud-saved progress, upgrades, and a global leaderboard. 
 
 ## Driving Question to Create this Game
 What can be done to make an old 80s arcade game interesting to kids again?
@@ -43,6 +43,9 @@ What can be done to make an old 80s arcade game interesting to kids again?
 * [x] User account sign-up and login system (`auth.js`)
 * [x] Cloud progress saving and live global leaderboard (`database.js`)
 * [x] Christmas 2027 Branding
+
+## How to become a contributor
+Want to help make this game the best it can be? Apply to contribute by emailing greenhenry441@gmail.com with your name, github username, email, and why you want to help and what you plan to do.
 
 ## Contact
 
