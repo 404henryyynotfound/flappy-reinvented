@@ -1,0 +1,18 @@
+# Default owner for everything in the repository
+# Automatically requests review from Henry Green on all Pull Requests
+* @404henryyyynotfound
+
+# Core Game & UI Files
+/index.html @404henryyyynotfound
+/game.js @404henryyyynotfound
+
+# Authentication, Cloud Saves & Supabase Backend
+/auth.js @404henryyyynotfound
+/database.js @404henryyyynotfound
+/supabase-config.js @404henryyyynotfound
+
+# Deployment Workflows & Repository Governance
+/.github/ @404henryyyynotfound
+/GOVERNANCE.md @404henryyyynotfound
+/SECURITY.md @404henryyyynotfound
+/CONTRIBUTING.md @404henryyyynotfound
