@@ -53,7 +53,7 @@
       width: 100%;
       height: 100%;
       z-index: 0;
-      opacity: 0.5;
+      opacity: 0.6;
       pointer-events: none;
     }
 
@@ -64,7 +64,7 @@
 
     /* Announcement Banner */
     .announcement-banner {
-      background-color: var(--banner-bg, #29adff);
+      background-color: #d42426;
       color: #ffffff;
       font-size: 0.45rem;
       padding: 8px 12px;
@@ -88,33 +88,33 @@
     .progress-bar {
       width: 0%;
       height: 100%;
-      background-color: var(--primary-color, #38b764);
+      background-color: #d42426;
       transition: width 0.1s linear;
     }
 
     h1 {
       font-size: 1.4rem;
       line-height: 1.4;
-      color: var(--title-color, #f77622);
-      text-shadow: 3px 3px var(--title-shadow, #d95763);
+      color: #d42426;
+      text-shadow: 3px 3px #2e8b57;
       margin-bottom: 8px;
       padding: 0 20px;
     }
 
     .author {
       font-size: 0.55rem;
-      color: #639bff;
+      color: #2e8b57;
       margin-bottom: 20px;
       text-decoration: none;
     }
 
     .author a {
-      color: #29adff;
+      color: #2e8b57;
       text-decoration: underline;
     }
 
     .author a:hover {
-      color: #ffcd75;
+      color: #d42426;
     }
 
     .menu-buttons {
@@ -130,32 +130,32 @@
       font-weight: bold;
       border: 4px solid #ffffff;
       cursor: pointer;
-      background-color: var(--primary-color, #38b764);
+      background-color: #d42426;
       color: #ffffff;
       box-shadow: 4px 4px #181425;
       image-rendering: pixelated;
     }
 
     button:hover {
-      background-color: var(--primary-hover, #41af6e);
+      background-color: #e53b3d;
       transform: translate(-2px, -2px);
       box-shadow: 6px 6px #181425;
     }
 
     button.secondary {
-      background-color: #29adff;
+      background-color: #2e8b57;
     }
 
     button.secondary:hover {
-      background-color: #3cb3ff;
+      background-color: #3cb371;
     }
 
     button.accent {
-      background-color: var(--accent-color, #f77622);
+      background-color: #2e8b57;
     }
 
     button.accent:hover {
-      background-color: var(--accent-hover, #ff8c3b);
+      background-color: #3cb371;
     }
 
     #game-screen {
@@ -195,7 +195,7 @@
     .modal h2 {
       font-size: 0.8rem;
       margin-bottom: 12px;
-      color: #ffcd75;
+      color: #d42426;
     }
 
     .shop-grid, .level-grid {
@@ -230,7 +230,6 @@
       font-size: 0.5rem;
     }
 
-    /* Version number tag in bottom right */
     #version-tag {
       position: absolute;
       bottom: 10px;
@@ -248,11 +247,11 @@
     }
   </style>
 </head>
-<body style="--primary-color: #38b764; --primary-hover: #41af6e; --accent-color: #f77622; --accent-hover: #ff8c3b; --title-color: #f77622; --title-shadow: #d95763; --banner-bg: #29adff;">
+<body>
 
   <!-- Audio Tracks -->
   <audio id="menu-music" loop>
-    <source src="https://actions.google.com/sounds/v1/ambiences/morning_birds.ogg" type="audio/ogg">
+    <source src="https://www.chosic.com/wp-content/uploads/2023/12/jingle-bells-kevin-macleod-main-version-29759-02-05.mp3" type="audio/mpeg">
   </audio>
 
   <audio id="shop-music" loop>
@@ -264,23 +263,22 @@
 
   <!-- LOADING SCREEN -->
   <div id="loading-screen" class="screen">
-    <h2 style="font-size: 0.8rem; margin-bottom: 10px;">LOADING...</h2>
+    <h2 style="font-size: 0.8rem; margin-bottom: 10px; color: #d42426;">LOADING...</h2>
     <div class="progress-container">
       <div id="progress-bar" class="progress-bar"></div>
     </div>
-    <p id="progress-text" style="font-size: 0.45rem; margin-top: 10px; color: #ffcd75;">0%</p>
+    <p id="progress-text" style="font-size: 0.45rem; margin-top: 10px; color: #2e8b57;">0%</p>
   </div>
 
   <!-- MAIN MENU -->
   <div id="menu-screen" class="screen hidden">
     <canvas id="menu-bg-canvas"></canvas>
     
-    <!-- Announcement Banner -->
     <div class="announcement-banner">
-      We need your help! Email greenhenry441@gmail.com with feature requests!
+      Merry Christmas! Email greenhenry441@gmail.com with feature requests!
     </div>
 
-    <h1 id="main-title">FLAPPY BIRD REINVENTED</h1>
+    <h1>FLAPPY BIRD REINVENTED</h1>
     <p class="author">BY <a href="https://about.me/henry.g" target="_blank">HENRY GREEN</a></p>
     <p class="author" id="user-status-text" style="margin-top: -10px;">LOGGED OUT (GUEST)</p>
 
@@ -319,7 +317,7 @@
   <!-- CAMPAIGN SELECT MODAL -->
   <div id="campaign-modal" class="modal hidden">
     <h2>CAMPAIGN LEVELS</h2>
-    <p style="font-size: 0.5rem; margin-bottom: 10px; color: #639bff;">Beat levels in order!</p>
+    <p style="font-size: 0.5rem; margin-bottom: 10px; color: #2e8b57;">Beat levels in order!</p>
     <div class="level-grid" id="level-list"></div>
     <button class="secondary close-modal-btn" style="width: 100%;">CLOSE</button>
   </div>
@@ -346,9 +344,9 @@
     <h2>CHANGELOG (v1.0.1 Beta)</h2>
     <div class="shop-grid" style="text-align: left; font-size: 0.5rem; line-height: 1.6; max-height: 200px; padding: 5px;">
       <p>- Fixed leaderboard to accurately track and update live player scores without placeholders</p>
-      <p>- Added Christmas seasonal red & green branding (Auto reverts after Dec 26th!)</p>
+      <p>- Added Christmas seasonal red & green branding with falling snowflakes</p>
+      <p>- Added Jingle Bells background music</p>
       <p>- Added Santa hats to birds</p>
-      <p>- Added feature request announcement banner</p>
     </div>
     <button class="secondary close-modal-btn" style="width: 100%;">CLOSE</button>
   </div>
@@ -357,20 +355,6 @@
   <script src="auth.js"></script>
 
   <script>
-    // Christmas Branding Check (Active through Dec 26th, auto-reverts after)
-    const now = new Date();
-    const isChristmasSeason = now.getMonth() === 11 && now.getDate() <= 26;
-
-    if (isChristmasSeason) {
-      document.documentElement.style.setProperty('--primary-color', '#d42426');      // Christmas Red
-      document.documentElement.style.setProperty('--primary-hover', '#e53b3d');
-      document.documentElement.style.setProperty('--accent-color', '#2e8b57');       // Christmas Green
-      document.documentElement.style.setProperty('--accent-hover', '#3cb371');
-      document.documentElement.style.setProperty('--title-color', '#d42426');      // Red Title
-      document.documentElement.style.setProperty('--title-shadow', '#2e8b57');     // Green Shadow
-      document.documentElement.style.setProperty('--banner-bg', '#d42426');        // Red Banner
-    }
-
     const loadingScreen = document.getElementById('loading-screen');
     const menuScreen = document.getElementById('menu-screen');
     const gameScreen = document.getElementById('game-screen');
@@ -389,7 +373,9 @@
     let unlockedLevels = 1;
     let purchasedPerks = [];
 
-    loadUserDataToState();
+    if (typeof loadUserDataToState === 'function') {
+      loadUserDataToState();
+    }
 
     const skins = [
       { name: 'Classic Yellow', color: '#f8c038', price: 0 },
@@ -438,10 +424,11 @@
     let hasShield = false;
     let frameCount = 0;
 
-    // Background Menu Flawless Flight Course Simulation Setup
+    // Menu Background Canvas with Snowflakes Setup
     const menuBgCanvas = document.getElementById('menu-bg-canvas');
     const menuBgCtx = menuBgCanvas.getContext('2d');
     let bgPipes = [];
+    let snowflakes = [];
     let bgBird = { x: 120, y: 200, velocity: 0, targetY: 200 };
 
     function initMenuBackground() {
@@ -456,17 +443,29 @@
           bottom: topH + 150
         });
       }
+
+      // Initialize Snowflakes
+      snowflakes = [];
+      for (let i = 0; i < 60; i++) {
+        snowflakes.push({
+          x: Math.random() * menuBgCanvas.width,
+          y: Math.random() * menuBgCanvas.height,
+          radius: Math.random() * 3 + 1,
+          speed: Math.random() * 1.5 + 0.5,
+          drift: Math.random() * 1 - 0.5
+        });
+      }
     }
     window.addEventListener('resize', initMenuBackground);
     initMenuBackground();
 
     function renderMenuBackground() {
       if (!menuScreen.classList.contains('hidden')) {
-        menuBgCtx.fillStyle = '#3b5dc9';
+        menuBgCtx.fillStyle = '#1b2a47';
         menuBgCtx.fillRect(0, 0, menuBgCanvas.width, menuBgCanvas.height);
 
-        // Update and draw background pipes
-        menuBgCtx.fillStyle = isChristmasSeason ? '#2e8b57' : '#38b764';
+        // Update and draw Christmas green background pipes
+        menuBgCtx.fillStyle = '#2e8b57';
         bgPipes.forEach(p => {
           p.x -= 2;
           if (p.x < -80) {
@@ -482,16 +481,27 @@
           menuBgCtx.strokeRect(p.x, p.bottom, 60, menuBgCanvas.height - p.bottom);
         });
 
-        // Flawless Navigation: Target upcoming pipe gap center automatically
+        // Update and draw Snowflakes
+        menuBgCtx.fillStyle = '#ffffff';
+        snowflakes.forEach(flake => {
+          flake.y += flake.speed;
+          flake.x += flake.drift;
+          if (flake.y > menuBgCanvas.height) {
+            flake.y = 0;
+            flake.x = Math.random() * menuBgCanvas.width;
+          }
+          menuBgCtx.beginPath();
+          menuBgCtx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+          menuBgCtx.fill();
+        });
+
         let nextPipe = bgPipes.find(p => p.x + 60 > bgBird.x);
         if (nextPipe) {
           bgBird.targetY = (nextPipe.top + nextPipe.bottom) / 2;
         }
 
-        // Smoothly adjust bird position toward gap center
         bgBird.y += (bgBird.targetY - bgBird.y) * 0.08;
 
-        // Draw Bird
         let activeColor = skins.find(s => s.name === currentSkin)?.color || '#f8c038';
         menuBgCtx.fillStyle = activeColor;
         menuBgCtx.beginPath();
@@ -501,7 +511,6 @@
         menuBgCtx.lineWidth = 2;
         menuBgCtx.stroke();
 
-        // Bird Eye & Beak
         menuBgCtx.fillStyle = '#ffffff';
         menuBgCtx.fillRect(bgBird.x + 3, bgBird.y - 6, 5, 5);
         menuBgCtx.fillStyle = '#181425';
@@ -511,19 +520,17 @@
         menuBgCtx.fillRect(bgBird.x + 12, bgBird.y - 2, 6, 5);
 
         // Santa Hat on Menu Bird
-        if (isChristmasSeason) {
-          menuBgCtx.fillStyle = '#d42426';
-          menuBgCtx.beginPath();
-          menuBgCtx.moveTo(bgBird.x - 8, bgBird.y - 14);
-          menuBgCtx.lineTo(bgBird.x + 10, bgBird.y - 14);
-          menuBgCtx.lineTo(bgBird.x, bgBird.y - 30);
-          menuBgCtx.fill();
+        menuBgCtx.fillStyle = '#d42426';
+        menuBgCtx.beginPath();
+        menuBgCtx.moveTo(bgBird.x - 8, bgBird.y - 14);
+        menuBgCtx.lineTo(bgBird.x + 10, bgBird.y - 14);
+        menuBgCtx.lineTo(bgBird.x, bgBird.y - 30);
+        menuBgCtx.fill();
 
-          menuBgCtx.fillStyle = '#ffffff';
-          menuBgCtx.beginPath();
-          menuBgCtx.arc(bgBird.x, bgBird.y - 30, 3, 0, Math.PI * 2);
-          menuBgCtx.fill();
-        }
+        menuBgCtx.fillStyle = '#ffffff';
+        menuBgCtx.beginPath();
+        menuBgCtx.arc(bgBird.x, bgBird.y - 30, 3, 0, Math.PI * 2);
+        menuBgCtx.fill();
       }
       requestAnimationFrame(renderMenuBackground);
     }
@@ -561,21 +568,8 @@
       }
     }, { once: true });
 
-    function loadUserDataToState() {
-      if (db && db.currentUser) {
-        let uData = db.getUserData();
-        if (uData) {
-          robins = uData.robins;
-          unlockedSkins = uData.unlockedSkins;
-          currentSkin = uData.currentSkin;
-          unlockedLevels = uData.unlockedLevels;
-          purchasedPerks = uData.purchasedPerks;
-        }
-      }
-    }
-
     function saveCurrentState() {
-      if (db && db.currentUser) {
+      if (typeof db !== 'undefined' && db && db.currentUser) {
         db.saveUserData({ robins, unlockedSkins, currentSkin, unlockedLevels, purchasedPerks });
       }
     }
@@ -618,25 +612,29 @@
     window.handleSignIn = function() {
       let u = document.getElementById('auth-user').value.trim();
       let p = document.getElementById('auth-pass').value.trim();
-      let res = db.signIn(u, p);
-      alert(res.message);
-      if (res.success) {
-        loadUserDataToState();
-        authModal.classList.add('hidden');
-        updateUI();
+      if (typeof db !== 'undefined' && db) {
+        let res = db.signIn(u, p);
+        alert(res.message);
+        if (res.success) {
+          if (typeof loadUserDataToState === 'function') loadUserDataToState();
+          authModal.classList.add('hidden');
+          updateUI();
+        }
       }
     }
 
     window.handleSignUp = function() {
       let u = document.getElementById('auth-user').value.trim();
       let p = document.getElementById('auth-pass').value.trim();
-      let res = db.signUp(u, p);
-      alert(res.message);
-      if (res.success) {
-        db.signIn(u, p);
-        loadUserDataToState();
-        authModal.classList.add('hidden');
-        updateUI();
+      if (typeof db !== 'undefined' && db) {
+        let res = db.signUp(u, p);
+        alert(res.message);
+        if (res.success) {
+          db.signIn(u, p);
+          if (typeof loadUserDataToState === 'function') loadUserDataToState();
+          authModal.classList.add('hidden');
+          updateUI();
+        }
       }
     }
 
@@ -696,7 +694,7 @@
     }
 
     function updateUI() {
-      let username = (db && db.currentUser) ? db.currentUser.toUpperCase() : 'GUEST';
+      let username = (typeof db !== 'undefined' && db && db.currentUser) ? db.currentUser.toUpperCase() : 'GUEST';
       document.getElementById('user-status-text').textContent = `LOGGED IN AS: ${username}`;
       document.getElementById('robins-display').textContent = `ROBINS: ${robins} 🐦`;
       document.getElementById('score-display').textContent = currentMode === 'campaign' ? `GOAL: ${levels[activeLevel-1].target}` : `SCORE: ${score}`;
@@ -730,7 +728,7 @@
           item.className = 'shop-item';
           item.innerHTML = `
             <span>${perk.name}</span>
-            ${isOwned ? '<span style="color:#38b764;">OWNED</span>' : `<button onclick="buyPerk('${perk.id}', ${perk.price})">BUY (${perk.price}🐦)</button>`}
+            ${isOwned ? '<span style="color:#2e8b57;">OWNED</span>' : `<button onclick="buyPerk('${perk.id}', ${perk.price})">BUY (${perk.price}🐦)</button>`}
           `;
           list.appendChild(item);
         });
@@ -804,7 +802,7 @@
 
     function submitScoreToLeaderboard() {
       let scores = JSON.parse(localStorage.getItem('flappy_leaderboard')) || [];
-      let playerName = (db && db.currentUser) ? db.currentUser.toUpperCase() : 'GUEST';
+      let playerName = (typeof db !== 'undefined' && db && db.currentUser) ? db.currentUser.toUpperCase() : 'GUEST';
       
       let existing = scores.find(s => s.name === playerName);
       if (existing) {
@@ -957,7 +955,7 @@
       ctx.fillStyle = '#3b5dc9';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = isChristmasSeason ? '#2e8b57' : '#38b764';
+      ctx.fillStyle = '#2e8b57';
       pipes.forEach(p => {
         ctx.fillRect(p.x, 0, 50, p.top);
         ctx.fillRect(p.x, p.bottom, 50, canvas.height - p.bottom);
@@ -982,55 +980,34 @@
       ctx.beginPath();
       ctx.arc(bird.x, bird.y, activeRadius, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = hasShield ? '#29adff' : '#ffffff';
-      ctx.lineWidth = hasShield ? 4 : 2;
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Bird Eyes & Beak
       ctx.fillStyle = '#ffffff';
-      ctx.fillRect(bird.x + 3, bird.y - 6, 5, 5);
+      ctx.fillRect(bird.x + 4, bird.y - 6, 5, 5);
       ctx.fillStyle = '#181425';
-      ctx.fillRect(bird.x + 5, bird.y - 5, 2, 2);
+      ctx.fillRect(bird.x + 6, bird.y - 5, 2, 2);
 
       ctx.fillStyle = '#f77622';
-      ctx.fillRect(bird.x + activeRadius - 2, bird.y - 2, 6, 5);
-
-      // Christmas Santa Hat on Bird
-      if (isChristmasSeason) {
-        ctx.fillStyle = '#d42426';
-        ctx.beginPath();
-        ctx.moveTo(bird.x - 8, bird.y - activeRadius);
-        ctx.lineTo(bird.x + 10, bird.y - activeRadius);
-        ctx.lineTo(bird.x, bird.y - activeRadius - 16);
-        ctx.fill();
-
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(bird.x, bird.y - activeRadius - 16, 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
+      ctx.fillRect(bird.x + activeRadius, bird.y - 2, 6, 5);
 
       if (gameOver) {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.fillStyle = '#f77622';
-        ctx.font = '11px "Press Start 2P"';
+        ctx.fillStyle = '#d42426';
+        ctx.font = '16px "Press Start 2P"';
         ctx.textAlign = 'center';
-        ctx.fillText(currentMode === 'campaign' && score >= levels[activeLevel-1].target ? 'VICTORY!' : 'GAME OVER', canvas.width / 2, canvas.height / 2 - 60);
-
-        ctx.fillStyle = '#ffcd75';
-        ctx.font = '7px "Press Start 2P"';
-        ctx.fillText(`SCORE: ${score}`, canvas.width / 2, canvas.height / 2 - 20);
-        ctx.fillText(`ROBINS EARNED: +${sessionRobins} 🐦`, canvas.width / 2, canvas.height / 2 + 5);
-
+        ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 20);
         ctx.fillStyle = '#ffffff';
-        ctx.fillText('CLICK TO RETRY', canvas.width / 2, canvas.height / 2 + 55);
-        return;
+        ctx.font = '8px "Press Start 2P"';
+        ctx.fillText('CLICK TO TRY AGAIN', canvas.width / 2, canvas.height / 2 + 15);
       }
 
       frameCount++;
-      requestAnimationFrame(loop);
+      if (gameRunning) {
+        requestAnimationFrame(loop);
+      }
     }
   </script>
 </body>
