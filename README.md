@@ -1,8 +1,11 @@
 # Flappy Bird Reinvented
 
-**Created by Henry Green**
+**Created by Henry Green, a gifted and talented student doing a passion project:)**
 
-A modern, feature-packed take on the classic arcade game built with HTML5 Canvas, CSS, and JavaScript. Includes custom loading screens, player accounts, cloud-saved progress, upgrades, and a global leaderboard.
+A modern, feature-packed take on the classic arcade game built with HTML5 Canvas, CSS, and JavaScript. Includes custom loading screens, player accounts, cloud-saved progress, upgrades, and a global leaderboard. 
+
+## Driving Question to Create this Game
+What can be done to make an old 80s arcade game interesting to kids again?
 
 ## Play Online
 
