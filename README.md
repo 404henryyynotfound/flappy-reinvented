@@ -35,13 +35,14 @@ What can be done to make an old 80s arcade game interesting to kids again?
 * **Hosting:** Surge.sh
 * **Backend / Database:** Firebase or Supabase *(for accounts & leaderboards)*
 
-## Development Roadmap
+## Development Roadmap - Checkout changelog.md or releases for more info!
 
 * [x] Custom loading screen (`Flappy is loading...`) and main menu UI
 * [x] Core Flappy Bird physics, pipes, and collision detection (`game.js`)
 * [x] Signature "reinvented" gameplay mechanics & power-ups
 * [x] User account sign-up and login system (`auth.js`)
 * [x] Cloud progress saving and live global leaderboard (`database.js`)
+* [x] Christmas 2027 Branding
 
 ## Contact
 
